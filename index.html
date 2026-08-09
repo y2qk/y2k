@@ -86,6 +86,7 @@
             accent-color: #fff;
         }
 
+        /* Fare Işığı */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -98,7 +99,6 @@
             filter: drop-shadow(0 0 10px #fff);
         }
 
-        /* Mouse Trail */
         .trail-particle {
             position: fixed;
             pointer-events: none;
@@ -123,7 +123,7 @@
             pointer-events: none;
         }
 
-        /* Kan Denizi */
+        /* KÜT DÜZLÜĞÜ KALDIRILAN PÜRÜZSÜZ KAN DENİZİ */
         #blood-container {
             position: fixed;
             bottom: 0; left: 0;
@@ -131,25 +131,21 @@
             z-index: 2;
             pointer-events: none;
             transition: height 0.4s cubic-bezier(0.1, 1, 0.1, 1);
+            background: rgba(140, 0, 0, 0.9);
+            box-shadow: 0 -15px 40px #ff0000;
         }
 
         .blood-wave-svg {
             position: absolute;
-            top: -25px; left: 0;
-            width: 200%; height: 30px;
-            fill: #990000;
-            animation: waveMotion 3s infinite linear;
+            top: -28px; left: 0;
+            width: 200%; height: 35px;
+            fill: rgba(140, 0, 0, 0.9);
+            animation: waveMotion 2.5s infinite linear;
         }
 
         @keyframes waveMotion {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
-        }
-
-        .blood-body {
-            width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(160, 0, 0, 0.95) 0%, rgba(80, 0, 0, 0.85) 100%);
-            box-shadow: 0 -10px 30px #ff0000;
         }
 
         .scanlines {
@@ -178,11 +174,11 @@
 
         @keyframes horrorShake {
             0% { transform: translate(8px, -8px) scale(1.03); opacity: 0.95; filter: invert(1); }
-            50% { transform: translate(-6px, 6px) scale(0.97); opacity: 1; filter: invert(0); }
+            50% { transform: translate(-8px, 8px) scale(0.97); opacity: 1; filter: invert(0); }
             100% { transform: translate(3px, -3px) scale(1.01); opacity: 0.9; }
         }
 
-        /* UNDERTALE DEAD SCREEN OVERLAY */
+        /* UNDERTALE SİNEMATİK DEAD EKRANI */
         #dead-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -193,16 +189,22 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            opacity: 0;
+            animation: deadFadeIn 1.5s ease-out forwards;
+        }
+
+        @keyframes deadFadeIn {
+            to { opacity: 1; }
         }
 
         .dead-title {
-            font-size: 85px;
+            font-size: 90px;
             font-weight: 900;
             color: #ff0000;
-            letter-spacing: 12px;
-            text-shadow: 0 0 20px #ff0000, 0 0 40px #990000;
+            letter-spacing: 14px;
+            text-shadow: 0 0 25px #ff0000, 0 0 50px #880000;
             animation: deadShake 0.1s infinite alternate;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         @keyframes deadShake {
@@ -214,7 +216,7 @@
             background: #000;
             color: #fff;
             border: 2px solid #ff0000;
-            padding: 15px 35px;
+            padding: 16px 40px;
             font-family: inherit;
             font-size: 14px;
             letter-spacing: 3px;
@@ -229,20 +231,20 @@
             box-shadow: 0 0 35px #ff0000;
         }
 
-        /* Undertale Parçalanma Efekti */
+        /* Undertale Cam Parçalanma Efekti */
         .shatter-piece {
             position: absolute;
-            width: 12px; height: 12px;
+            width: 14px; height: 14px;
             background: #ff0000;
-            box-shadow: 0 0 10px #ff0000;
+            box-shadow: 0 0 12px #ff0000;
             pointer-events: none;
             z-index: 9999;
-            animation: shatterFly 0.8s forwards ease-out;
+            animation: shatterFly 0.8s forwards cubic-bezier(0.1, 1, 0.1, 1);
         }
 
         @keyframes shatterFly {
             0% { opacity: 1; transform: scale(1) translate(0, 0) rotate(0deg); }
-            100% { opacity: 0; transform: scale(0.1) translate(var(--sx), var(--sy)) rotate(360deg); }
+            100% { opacity: 0; transform: scale(0.1) translate(var(--sx), var(--sy)) rotate(720deg); }
         }
 
         .quote-column {
@@ -456,14 +458,14 @@
 <body>
 
     <!-- Sol Üst Widget -->
-    <div class="top-left-widget">
+    <div class="top-left-widget" id="ui-widget-left">
         <span id="weatherBox">☁ LOCATING...</span>
         <span>|</span>
         <span id="clockBox">00:00:00</span>
     </div>
 
     <!-- Sağ Üst Müzik Çalar -->
-    <div class="top-right-music">
+    <div class="top-right-music" id="ui-widget-right">
         <button class="music-btn" onclick="prevSong()">&lt;&lt;</button>
         <button class="music-btn" onclick="toggleAudio()" id="playBtn">▶</button>
         <button class="music-btn" onclick="nextSong()">&gt;&gt;</button>
@@ -479,7 +481,6 @@
         <svg class="blood-wave-svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
             <path d="M0,0 C150,90 350,-40 500,45 C650,110 900,-30 1200,30 L1200,120 L0,120 Z"></path>
         </svg>
-        <div class="blood-body"></div>
     </div>
 
     <div id="tv-glitch-overlay"></div>
@@ -532,7 +533,7 @@
 
         <!-- SAYFA 2: HARVEST CLICKER -->
         <div class="section" id="sec2">
-            <div class="card reveal-card">
+            <div class="card reveal-card" id="harvestCard">
                 <h1>soul harvest</h1>
                 <div class="subtitle">✦ PERMANENT SAVED SYSTEM ✦</div>
                 
@@ -628,7 +629,6 @@
 
         function changeVolume(val) { music.volume = val; }
 
-        // Web Audio Synthesizer
         let globalAudioCtx = null;
 
         function playSoftClick() {
@@ -776,10 +776,11 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // CLICKER ENGINE + UNDERTALE PARÇALANMA VE DEAD SCREEN EVENT
+        // TAM İSTEDİĞİN SİNEMATİK UNDERTALE PATLAMA AKIŞI
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
         let sessionClicks = 0;
         let overClickCount = 0;
+        let isDead = false;
         
         const scoreElem = document.getElementById('local-score');
         const harvestBtn = document.getElementById('harvestBtn');
@@ -787,10 +788,15 @@
         const bloodLevelText = document.getElementById('bloodLevelText');
         const glitchOverlay = document.getElementById('tv-glitch-overlay');
         const deadScreen = document.getElementById('dead-screen');
+        const viewport = document.getElementById('viewport');
+        const uiWidgetLeft = document.getElementById('ui-widget-left');
+        const uiWidgetRight = document.getElementById('ui-widget-right');
         
         scoreElem.innerText = savedScore;
 
         function addLocalScore(e) {
+            if (isDead) return; // Kilitlenir
+
             playSoftClick();
             savedScore++;
             sessionClicks++;
@@ -801,30 +807,55 @@
             bloodContainer.style.height = bloodPercent + '%';
             bloodLevelText.innerText = bloodPercent + '%';
 
-            // %100 KAN SEVİYESİNDE ZORLADIKÇA TİTREŞİM VE PATLAMA KADEMESİ
+            // %100 KAN SEVİYESİNDE BUTONA BASMAYA DEVAM EDİLİRSE SİNEMATİK SON BAŞLAR
             if (bloodPercent >= 100) {
                 overClickCount++;
                 playShatterSound();
                 glitchOverlay.style.display = 'block';
 
-                // Butonu 5 Kere Üst Üste Zorlayınca Patlayıp DEAD Ekranına Geçer
-                if(overClickCount >= 5) {
-                    // Undertale Kalp Parçalanma Efekti
-                    const rect = harvestBtn.getBoundingClientRect();
-                    for(let i = 0; i < 25; i++) {
-                        const piece = document.createElement('div');
-                        piece.className = 'shatter-piece';
-                        piece.style.left = (rect.left + rect.width / 2) + 'px';
-                        piece.style.top = (rect.top + rect.height / 2) + 'px';
-                        piece.style.setProperty('--sx', (Math.random() - 0.5) * 400 + 'px');
-                        piece.style.setProperty('--sy', (Math.random() - 0.5) * 400 + 'px');
-                        document.body.appendChild(piece);
-                    }
+                // KRİTİK ZORLAMA ANI: HER ŞEY BİR ANDA YOK OLUR (HER ŞEY ZİFİRİ KARANLIK OLUR)
+                if(overClickCount >= 4) {
+                    isDead = true;
 
-                    // Siyah Ekran & DEAD. Animasyonu
+                    // 1. AŞAMA: SAYFADAKİ HER ŞEYİ ANINDA GİZLE
+                    viewport.style.opacity = "0";
+                    if(uiWidgetLeft) uiWidgetLeft.style.display = "none";
+                    if(uiWidgetRight) uiWidgetRight.style.display = "none";
+                    bloodContainer.style.display = "none";
+
+                    // 2. AŞAMA: HARVEST BUTONUNU DÖNÜŞTÜRÜP EKRANIN ORTASINA TEK BAŞINA KOY
+                    harvestBtn.style.position = "fixed";
+                    harvestBtn.style.top = "50%";
+                    harvestBtn.style.left = "50%";
+                    harvestBtn.style.transform = "translate(-50%, -50%) scale(1.2)";
+                    harvestBtn.style.zIndex = "99999";
+                    harvestBtn.style.pointerEvents = "none";
+                    document.body.appendChild(harvestBtn);
+
+                    // 3. AŞAMA: UNDERTALE KALP GİBİ PATLAMA EFEKTİ
                     setTimeout(() => {
-                        deadScreen.style.display = 'flex';
-                    }, 300);
+                        const rect = harvestBtn.getBoundingClientRect();
+                        for(let i = 0; i < 35; i++) {
+                            const piece = document.createElement('div');
+                            piece.className = 'shatter-piece';
+                            piece.style.left = (rect.left + rect.width / 2) + 'px';
+                            piece.style.top = (rect.top + rect.height / 2) + 'px';
+                            piece.style.setProperty('--sx', (Math.random() - 0.5) * 600 + 'px');
+                            piece.style.setProperty('--sy', (Math.random() - 0.5) * 600 + 'px');
+                            document.body.appendChild(piece);
+                        }
+
+                        // BUTONU YOK ET
+                        harvestBtn.remove();
+                        glitchOverlay.style.display = 'none';
+
+                        // 4. AŞAMA: SİYAHLIK VE SESSİZLİK İÇİNDE BEKLEME, ARDINDAN GİRİŞ ANİMASYONUYLA "DEAD."
+                        setTimeout(() => {
+                            deadScreen.style.display = 'flex';
+                        }, 1200); // 1.2 sn bekleme
+
+                    }, 400);
+
                     return;
                 }
             }
@@ -891,6 +922,7 @@
         rotateDial();
 
         function tryUnlock() {
+            if (isDead) return;
             playSoftClick();
             let diff = Math.abs(angle - targetAngle);
             if (diff > 180) diff = 360 - diff;
