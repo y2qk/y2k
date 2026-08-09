@@ -9,9 +9,8 @@
         
         html { scroll-behavior: smooth; }
 
-        /* FARE İMLECİ ZORUNLU KILINDI */
         html, body, button, a, input, div {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M11 0h2v9h-2zm0 15h2v9h-2zm-11-4h9v2H0zm15 0h9v2h-9z' fill='white'/><circle cx='12' cy='12' r='2' fill='white'/></svg>") 12 12, crosshair !important;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M11 0h2v9h-2zm0 15h2v9h-2zm-11-4h9v2H0zm15 0h9v2h-9z' fill='white'/><circle cx='12' cy='12' r='2' fill='white'/></svg>") 12 12, auto !important;
         }
 
         button:hover, a:hover {
@@ -28,11 +27,16 @@
             animation: pageIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
         }
 
+        /* Dead Durumunda Scroll Kilitlenir */
+        body.is-dead {
+            overflow: hidden !important;
+            height: 100vh !important;
+        }
+
         @keyframes pageIntro {
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Widgetlar */
         .top-left-widget {
             position: fixed;
             top: 15px; left: 20px;
@@ -86,7 +90,6 @@
             accent-color: #fff;
         }
 
-        /* Fare Işığı */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -123,7 +126,6 @@
             pointer-events: none;
         }
 
-        /* TEMİZ, PÜRÜZSÜZ VE AKICI KAN DENİZİ */
         #blood-container {
             position: fixed;
             bottom: 0; left: 0;
@@ -173,12 +175,12 @@
             100% { transform: translate(3px, -3px) scale(1.01); opacity: 0.9; }
         }
 
-        /* NAZİK SİNEMATİK DEAD EKRANI */
+        /* TEK SAYFA ZİFİRİ SİYAH UNDERTALE DEAD SCREEN */
         #dead-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000;
-            z-index: 100000;
+            z-index: 1000000;
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -186,19 +188,22 @@
             text-align: center;
         }
 
+        /* GOTHIC Y2K DALGALANAN DEAD YAZISI */
         .dead-title {
-            font-size: 70px;
+            font-size: 80px;
             font-weight: 900;
             color: #ff0000;
-            letter-spacing: 12px;
-            text-shadow: 0 0 20px #ff0000;
+            letter-spacing: 16px;
+            text-shadow: 0 0 25px #ff0000, 0 0 50px #880000;
             opacity: 0;
-            transform: scale(0.9);
-            animation: gentleFadeIn 1.8s ease-out forwards;
+            animation: gothicWave 3s ease-in-out forwards;
         }
 
-        @keyframes gentleFadeIn {
-            to { opacity: 1; transform: scale(1); }
+        @keyframes gothicWave {
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+            30% { opacity: 1; transform: translateY(0) scale(1); }
+            70% { opacity: 1; transform: translateY(-10px) scale(1.05); text-shadow: 0 0 35px #ff0000; }
+            100% { opacity: 0; transform: translateY(-20px) scale(0.95); display: none; }
         }
 
         .reload-btn {
@@ -206,15 +211,18 @@
             background: #000;
             color: #fff;
             border: 1px solid #ff0000;
-            padding: 12px 30px;
+            padding: 14px 35px;
             font-family: inherit;
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 3px;
             cursor: pointer;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-            margin-top: 25px;
             transition: all 0.3s ease;
-            animation: gentleFadeIn 1.5s ease-out forwards 2s; /* YAZI DURDUKTAN SONRA GELİR */
+            animation: btnFadeIn 1s ease-out forwards 3.2s; /* YAZI GİTTİKTEN SONRA GELİR */
+        }
+
+        @keyframes btnFadeIn {
+            to { opacity: 1; }
         }
 
         .reload-btn:hover {
@@ -223,7 +231,6 @@
             box-shadow: 0 0 30px #ff0000;
         }
 
-        /* FLASH & UNDERTALE PARÇALANMA EFEKTİ */
         #flash-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -241,9 +248,9 @@
 
         .shatter-piece {
             position: fixed;
-            width: 10px; height: 10px;
+            width: 12px; height: 12px;
             background: #ff0000;
-            box-shadow: 0 0 12px #ff0000;
+            box-shadow: 0 0 15px #ff0000;
             pointer-events: none;
             z-index: 999999;
             animation: shatterFly 0.8s forwards cubic-bezier(0.1, 1, 0.1, 1);
@@ -485,14 +492,13 @@
     <div id="cursor-glow"></div>
     <div id="flash-overlay"></div>
     
-    <!-- TEMİZ VE PÜRÜZSÜZ YÜKSELEN KAN -->
     <div id="blood-container">
         <div class="blood-surface-line"></div>
     </div>
 
     <div id="tv-glitch-overlay"></div>
 
-    <!-- NAZİK SİNEMATİK UNDERTALE DEAD SCREEN -->
+    <!-- UNDERTALE DEAD SCREEN -->
     <div id="dead-screen">
         <div class="dead-title">DEAD.</div>
         <button class="reload-btn" onclick="location.reload()">[ RELOAD SYSTEM ]</button>
@@ -603,7 +609,7 @@
         const music = document.getElementById('bg-music');
         const playBtn = document.getElementById('playBtn');
         const songTitle = document.getElementById('songTitle');
-        music.volume = 0.05; // İLK BAŞLANGIÇTA %5 SES (ÇOK NAZİK)
+        music.volume = 0.05;
 
         function startAutoMusic() {
             music.play().then(() => { playBtn.innerText = "II"; }).catch(() => {});
@@ -823,8 +829,9 @@
 
                 if(overClickCount >= 4) {
                     isDead = true;
+                    document.body.classList.add('is-dead'); // SCROLL KİLİTLENİR
 
-                    // 1. AŞAMA: SİTEDEKİ TÜM ARAYÜZÜ YOK ET
+                    // 1. AŞAMA: SİTEDEKİ TÜM ARAYÜZÜ YOK ET (ZİFİRİ SİYAH EKRAN)
                     viewport.style.opacity = "0";
                     if(uiWidgetLeft) uiWidgetLeft.style.display = "none";
                     if(uiWidgetRight) uiWidgetRight.style.display = "none";
@@ -835,7 +842,7 @@
                     // 2. AŞAMA: EN ÜSTE KAYDIR
                     window.scrollTo(0, 0);
 
-                    // 3. AŞAMA: BUTONU MERKEZE AL VE BİR SÜRE BEKLET (1.5 SN)
+                    // 3. AŞAMA: BUTONU EKRANIN ORTASINDA BİR SÜRE BEKLET (1.5 SN)
                     harvestBtn.style.position = "fixed";
                     harvestBtn.style.top = "50%";
                     harvestBtn.style.left = "50%";
@@ -844,11 +851,10 @@
                     harvestBtn.style.pointerEvents = "none";
                     document.body.appendChild(harvestBtn);
 
+                    // GÖZ GÖRE GÖRE BEKLEME, ARDINDAN PATLAMA
                     setTimeout(() => {
-                        // FLASH IŞIK PATLAMASI
                         flashOverlay.style.display = 'block';
 
-                        // UNDERTALE PARÇALANMA EFEKTİ
                         const rect = harvestBtn.getBoundingClientRect();
                         for(let i = 0; i < 40; i++) {
                             const piece = document.createElement('div');
@@ -863,12 +869,12 @@
                         harvestBtn.remove();
                         glitchOverlay.style.display = 'none';
 
-                        // NAZİK SİNEMATİK DEAD EKRANININ AÇILIŞI
+                        // 4. AŞAMA: TEK SAYFA ZİFİRİ SİYAH EKRANDA "DEAD." VE BUTON
                         setTimeout(() => {
                             deadScreen.style.display = 'flex';
                         }, 800);
 
-                    }, 1200); // Ekran ortasında durma süresi
+                    }, 1500); // 1.5 saniye ekranda kalır
 
                     return;
                 }
