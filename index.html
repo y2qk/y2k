@@ -7,6 +7,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html { scroll-behavior: smooth; }
+
         body {
             background-color: #000;
             color: #fff;
@@ -15,7 +17,7 @@
             cursor: crosshair;
         }
 
-        /* Sol Üst Hava Durumu + Dijital Saat */
+        /* Sol Üst Widget */
         .top-left-widget {
             position: fixed;
             top: 15px; left: 20px;
@@ -34,21 +36,22 @@
             gap: 10px;
         }
 
-        /* Sağ Üst Müzik Çalar */
+        /* Büyütülen Sağ Üst Müzik Çalar */
         .top-right-music {
             position: fixed;
             top: 15px; right: 20px;
-            font-size: 10px;
+            font-size: 11px;
             letter-spacing: 1.5px;
             color: #fff;
             z-index: 100;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 6px 12px;
-            border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(8, 8, 12, 0.85);
+            padding: 10px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
             text-shadow: 0 0 6px #fff;
         }
 
@@ -58,13 +61,12 @@
             color: #fff;
             cursor: pointer;
             font-family: inherit;
-            font-size: 11px;
-            transition: color 0.2s;
+            font-size: 12px;
+            transition: transform 0.1s;
         }
 
-        .music-btn:hover { color: #888; }
+        .music-btn:hover { transform: scale(1.2); }
 
-        /* Fare Işığı */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -75,7 +77,6 @@
             z-index: 9999;
         }
 
-        /* Matrix Arka Plan */
         #matrix-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -85,7 +86,6 @@
             pointer-events: none;
         }
 
-        /* Kan Yükselme Efekti */
         #blood-container {
             position: fixed;
             bottom: 0; left: 0;
@@ -97,7 +97,6 @@
             box-shadow: 0 -10px 25px rgba(255, 0, 0, 0.5);
         }
 
-        /* CRT Ekran Çizgileri */
         .scanlines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -112,7 +111,6 @@
             z-index: 3;
         }
 
-        /* TV Glitch Overlay */
         #tv-glitch-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -129,7 +127,6 @@
             100% { transform: translate(1px, -1px); opacity: 0.8; }
         }
 
-        /* Yandaki Sözler (Temiz Beyaz Glow) */
         .quote-column {
             position: fixed;
             top: 0; width: 220px; height: 100vh;
@@ -155,9 +152,9 @@
             min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
             position: relative; padding: 60px 20px;
+            perspective: 1000px;
         }
 
-        /* 3D Derinlikli Kart */
         .card {
             position: relative;
             background: rgba(8, 8, 10, 0.95);
@@ -168,26 +165,38 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
             transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* ÖRÜMCEK 3D KUTU ARKASINA GİZLEME */
+        /* YUKARI VE AŞAĞI KAYDIRMA ANİMASYONLARI */
+        .reveal-card {
+            opacity: 0;
+            transform: translateY(70px) scale(0.9) rotateX(15deg);
+        }
+
+        .reveal-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+
+        /* KUTUYA ÇİVİLİ VE YUKARI KAÇAN ÖRÜMCEK */
         .spider-anchor {
             position: absolute;
-            bottom: -40px;
+            bottom: -45px;
             right: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: -1; /* KUTUNUN ARKASINDA DURUR */
+            z-index: -1;
             cursor: pointer;
-            transition: transform 0.4s ease-in-out;
         }
 
         .spider-thread {
             width: 1px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             box-shadow: 0 0 4px #fff;
+            transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .spider-icon {
@@ -196,9 +205,12 @@
             transition: fill 0.2s;
         }
 
-        /* Üstüne gelince kutunun arkasından YUKARI SAKLANIR */
-        .spider-anchor:hover {
-            transform: translateY(-38px);
+        .spider-anchor:hover .spider-thread {
+            height: 5px; /* İp kısalır, örümcek yukarı tırmanır */
+        }
+
+        .spider-anchor:hover .spider-icon {
+            fill: #fff;
         }
 
         .butterfly-svg {
@@ -263,7 +275,6 @@
 
         .click-btn:hover { background: #111; border-color: #fff; }
 
-        /* Lockpick Oyunu (Büyütüldü & Kolaylaştırıldı) */
         .lock-container {
             width: 150px; height: 150px;
             border: 2px solid #444; border-radius: 50%;
@@ -273,7 +284,7 @@
         }
 
         .lock-target {
-            position: absolute; width: 34px; height: 34px; /* Genişletildi */
+            position: absolute; width: 34px; height: 34px;
             border-radius: 50%; background: rgba(255, 255, 255, 0.25);
             border: 1px solid #fff; box-shadow: 0 0 12px #fff;
         }
@@ -344,19 +355,21 @@
 </head>
 <body>
 
-    <!-- Sol Üst Widget (Hava Durumu + Saat) -->
+    <!-- Sol Üst Widget -->
     <div class="top-left-widget">
         <span id="weatherBox">☁ LOCATING...</span>
         <span>|</span>
         <span id="clockBox">00:00:00</span>
     </div>
 
-    <!-- Sağ Üst Müzik Çalar -->
+    <!-- Büyütülen Sağ Üst Müzik Çalar -->
     <div class="top-right-music">
-        <span id="songTitle">♫ CYBER_VOID.MP3</span>
-        <button class="music-btn" onclick="toggleMusic()" id="playBtn">▶</button>
-        <button class="music-btn" onclick="nextSong()">&gt;&gt;</button>
+        <span>♫ CYBER_VOID</span>
+        <button class="music-btn" onclick="toggleAudio()" id="playBtn">▶</button>
     </div>
+
+    <!-- Otomatik Çalan Gerçek Müzik Akışı -->
+    <audio id="bg-music" loop src="https://stream.zeno.fm/f3wvbbqmdg8uv"></audio>
 
     <div id="cursor-glow"></div>
     <div id="blood-container"></div>
@@ -381,7 +394,7 @@
 
         <!-- SAYFA 1: PROFİL -->
         <div class="section" id="sec1">
-            <div class="card">
+            <div class="card reveal-card active">
                 <svg class="butterfly-svg" viewBox="0 0 24 24">
                     <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
                 </svg>
@@ -389,14 +402,13 @@
                 <h1>y.1q.</h1>
                 <div class="subtitle">✦ 𐕣 GHOST // Y2K GOTHIC 𐕣 ✦</div>
 
-                <a href="https://discord.gg/SENIN_SUNUCU_LINKIN" target="_blank" class="dc-btn">
+                <a href="https://discord.gg/28HEFx4a5" target="_blank" class="dc-btn">
                     <svg class="dc-icon" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
                     </svg>
                     JOIN DISCORD SERVER
                 </a>
 
-                <!-- 3D KUTUNUN ARKASINA SAKLANAN ÖRÜMCEK -->
                 <div class="spider-anchor">
                     <div class="spider-thread"></div>
                     <svg class="spider-icon" viewBox="0 0 24 24">
@@ -409,7 +421,7 @@
 
         <!-- SAYFA 2: HARVEST CLICKER -->
         <div class="section" id="sec2">
-            <div class="card">
+            <div class="card reveal-card">
                 <h1>soul harvest</h1>
                 <div class="subtitle">✦ PERMANENT SAVED SYSTEM ✦</div>
                 
@@ -429,7 +441,7 @@
 
         <!-- SAYFA 3: CYBER LOCKPICK OYUNU -->
         <div class="section" id="sec3">
-            <div class="card">
+            <div class="card reveal-card">
                 <h1>cyber lockpick</h1>
                 <div class="subtitle">✦ TIMING HACK SYSTEM ✦</div>
                 
@@ -449,7 +461,7 @@
                         <p style="font-size: 12px; color: #fff; margin: 10px 0; font-style: italic; line-height: 1.5; text-shadow: 0 0 8px #ff0000;">
                             "The monsters we fear in the shadows are only the reflection of the silence we created."
                         </p>
-                        <span style="color: #666; font-size: 9px; letter-spacing: 1.5px;">— GHOST ARCHIVE // NODE 05</span>
+                        <a href="https://discord.gg/28HEFx4a5" target="_blank" style="color: #ff3333; font-size: 10px; text-decoration: underline;">JOIN DISCORD COMMUNITY →</a>
                     </div>
                 </div>
 
@@ -464,6 +476,44 @@
     </div>
 
     <script>
+        // Müzik Motoru (İlk Tıklamada Otomatik Başlar)
+        const music = document.getElementById('bg-music');
+        const playBtn = document.getElementById('playBtn');
+        music.volume = 0.25; // Rahatsız etmeyecek hafif seviye
+
+        function startAutoMusic() {
+            music.play().then(() => {
+                playBtn.innerText = "II";
+            }).catch(() => {});
+            document.removeEventListener('click', startAutoMusic);
+        }
+        document.addEventListener('click', startAutoMusic);
+
+        function toggleAudio() {
+            if (music.paused) {
+                music.play();
+                playBtn.innerText = "II";
+            } else {
+                music.pause();
+                playBtn.innerText = "▶";
+            }
+        }
+
+        // Kaydırma Animasyonu Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.reveal-card').forEach(card => {
+            observer.observe(card);
+        });
+
         // Dijital Saat
         function updateClock() {
             const now = new Date();
@@ -472,39 +522,6 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
-
-        // Müzik Çalar (Synth Generator)
-        let isPlaying = false;
-        let audioCtx = null;
-        let songIndex = 0;
-        const songs = ["CYBER_VOID.MP3", "GHOST_BEAT.MP3", "DARK_Y2K.MP3"];
-
-        function toggleMusic() {
-            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            isPlaying = !isPlaying;
-            document.getElementById('playBtn').innerText = isPlaying ? "II" : "▶";
-        }
-
-        function nextSong() {
-            songIndex = (songIndex + 1) % songs.length;
-            document.getElementById('songTitle').innerText = "♫ " + songs[songIndex];
-        }
-
-        // Nazik Siber Tıklama Sesi
-        function playSoftClick() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine'; // Yumuşak ton
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
-        }
 
         // Fare Işığı
         const glow = document.getElementById('cursor-glow');
@@ -587,7 +604,7 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // Clicker Engine + %100 Glitch & Kan Sıfırlama
+        // Clicker Engine
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
         let sessionClicks = 0;
         
@@ -600,7 +617,6 @@
         scoreElem.innerText = savedScore;
 
         function addLocalScore(e) {
-            playSoftClick();
             savedScore++;
             sessionClicks++;
             localStorage.setItem('y1q_harvest_score', savedScore);
@@ -610,12 +626,11 @@
             bloodContainer.style.height = bloodPercent + '%';
             bloodLevelText.innerText = bloodPercent + '%';
 
-            // %100 Olunca Glitch Çakar ve 1.5 sn Sonra Kan Sıfırlanır
             if (bloodPercent >= 100) {
                 glitchOverlay.style.display = 'block';
                 setTimeout(() => { 
                     glitchOverlay.style.display = 'none'; 
-                    sessionClicks = 0; // KANI SIFIRLAR
+                    sessionClicks = 0;
                     bloodContainer.style.height = '0%';
                     bloodLevelText.innerText = '0%';
                 }, 1500);
@@ -652,7 +667,7 @@
             setTimeout(() => drip.remove(), 1200);
         }
 
-        // Kilit Oyunu (Aşırı Kolaylaştırıldı)
+        // Lockpick Engine
         let angle = 0;
         let targetAngle = Math.random() * 260 + 50;
         let streak = 0;
@@ -676,18 +691,17 @@
         positionTarget();
 
         function rotateDial() {
-            angle = (angle + 2) % 360; // HIZ YAVAŞLATILDI (ÇOK RAHAT TUTAR)
+            angle = (angle + 2) % 360;
             pointer.style.transform = `rotate(${angle}deg)`;
             requestAnimationFrame(rotateDial);
         }
         rotateDial();
 
         function tryUnlock() {
-            playSoftClick();
             let diff = Math.abs(angle - targetAngle);
             if (diff > 180) diff = 360 - diff;
 
-            if (diff < 32) { // TOLERANS BÜYÜTÜLDÜ
+            if (diff < 32) {
                 streak++;
                 streakCount.innerText = streak + " / 5";
                 lockStatus.innerText = "SUCCESS! NODE UNLOCKED 𐕣";
