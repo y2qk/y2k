@@ -99,22 +99,38 @@
         /* Y2K Dark Card Base */
         .card {
             position: relative;
-            background: rgba(8, 8, 10, 0.94);
-            border: 2px solid #222;
+            background: rgba(8, 8, 10, 0.95);
+            border: 2px solid #333;
             padding: 45px 35px;
-            width: 390px;
+            width: 440px;
+            max-width: 90vw;
             text-align: center;
             border-radius: 6px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(0, 0, 0, 0.95);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.08), inset 0 0 20px rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(8px);
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Hanging Spider on Bottom-Right Corner */
+        /* Neon Weather Widget */
+        .weather-badge {
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px #fff, 0 0 15px rgba(255, 255, 255, 0.8);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            padding: 8px 14px;
+            display: inline-block;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Fixed Spider (Climbs UP on Hover) */
         .spider-box-bottom {
             position: absolute;
-            bottom: -55px;
-            right: 20px;
+            bottom: -50px;
+            right: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -123,8 +139,8 @@
 
         .spider-thread-bottom {
             width: 1px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.4);
+            height: 35px;
+            background: rgba(255, 255, 255, 0.5);
             transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             box-shadow: 0 0 4px #fff;
         }
@@ -145,7 +161,7 @@
             fill: #ccc;
             filter: drop-shadow(0 0 8px #fff);
             margin-bottom: 15px;
-            margin-top: 10px;
+            margin-top: 5px;
             animation: pulseGlow 3s infinite alternate;
         }
 
@@ -182,7 +198,7 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 13px;
-            border: 1px solid #444;
+            border: 1px solid #555;
             border-radius: 4px;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
@@ -214,8 +230,8 @@
         /* Gothic Boxes for Minigames */
         .gothic-box {
             background: #000;
-            border: 1px dashed #444;
-            padding: 20px;
+            border: 1px dashed #555;
+            padding: 22px;
             border-radius: 4px;
             margin-top: 15px;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
@@ -272,7 +288,7 @@
             box-shadow: 0 0 15px #fff;
         }
 
-        /* Repeating Scroll Animation Classes */
+        /* Scroll Animations */
         .reveal-card {
             opacity: 0;
             transform: translateY(70px) scale(0.9) rotateX(15deg);
@@ -283,16 +299,22 @@
             transform: translateY(0) scale(1) rotateX(0deg);
         }
 
-        /* System Status Log (Bottom Area) */
+        /* System Log */
         .system-log {
-            font-size: 10px;
-            color: #555;
+            font-size: 11px;
+            color: #aaa;
             text-align: left;
-            margin-top: 15px;
-            line-height: 1.6;
-            border-top: 1px solid #222;
-            padding-top: 10px;
+            margin-top: 20px;
+            line-height: 1.8;
+            border-top: 1px solid #333;
+            padding-top: 12px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 12px;
+            border-radius: 4px;
         }
+
+        .log-green { color: #fff; text-shadow: 0 0 8px #fff; }
     </style>
 </head>
 <body>
@@ -317,7 +339,14 @@
     <!-- SECTION 1: PROFILE -->
     <div class="section" id="sec1">
         <div class="card reveal-card active">
-            <!-- Single Butterfly -->
+            <!-- Neon Glow Weather & Location Badge -->
+            <div class="weather-badge" id="weatherBox">
+                ☁ LOCATING...
+            </div>
+
+            <br>
+
+            <!-- Butterfly Logo -->
             <svg class="butterfly-svg" viewBox="0 0 24 24">
                 <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
             </svg>
@@ -332,7 +361,7 @@
                 ENTER VOID (DISCORD)
             </a>
 
-            <!-- Hanging Spider on Bottom-Right -->
+            <!-- Spider (Climbs UP) -->
             <div class="spider-box-bottom" id="spiderBox">
                 <div class="spider-thread-bottom" id="spiderThread"></div>
                 <svg class="spider-icon-bottom" id="spiderIcon" viewBox="0 0 24 24">
@@ -343,28 +372,34 @@
         <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
     </div>
 
-    <!-- SECTION 2: CLICKER (PERMANENT SAVED) -->
+    <!-- SECTION 2: CLICKER -->
     <div class="section" id="sec2">
         <div class="card reveal-card">
             <h1>soul harvest</h1>
-            <div class="subtitle">✦ SAVED SYSTEM CLICKS ✦</div>
+            <div class="subtitle">✦ PERMANENT SAVED SYSTEM ✦</div>
             
             <div class="gothic-box">
-                <p style="font-size: 10px; color: #666; letter-spacing: 2px;">YOUR SAVED HARVEST</p>
-                <h2 id="local-score" style="font-size: 36px; margin: 12px 0; color: #fff; text-shadow: 0 0 10px #fff;">0</h2>
+                <p style="font-size: 10px; color: #888; letter-spacing: 2px;">LOCAL SAVED HARVEST</p>
+                <h2 id="local-score" style="font-size: 38px; margin: 12px 0; color: #fff; text-shadow: 0 0 12px #fff;">0</h2>
                 <button class="click-btn" onclick="addLocalScore()">HARVEST SOUL 𐕣</button>
+            </div>
+
+            <div class="system-log">
+                STATUS: <span class="log-green">ACTIVE</span><br>
+                RANK: <span style="color: #fff;">VOID WALKER</span><br>
+                ENCRYPTION: 256-BIT Y2K
             </div>
         </div>
     </div>
 
-    <!-- SECTION 3: PATTERN MEMORY MINIGAME & LOGS -->
+    <!-- SECTION 3: PATTERN MEMORY -->
     <div class="section" id="sec3">
         <div class="card reveal-card">
             <h1>void pattern</h1>
             <div class="subtitle">✦ GOTHIC MEMORY SYSTEM ✦</div>
             
             <div class="gothic-box">
-                <p id="game-status" style="font-size: 11px; color: #aaa;">PRESS START TO BEGIN</p>
+                <p id="game-status" style="font-size: 11px; color: #ccc;">PRESS START TO BEGIN</p>
                 
                 <div class="pattern-grid">
                     <div class="pattern-node" onclick="nodeClick(0)">𐕣</div>
@@ -379,9 +414,9 @@
             </div>
 
             <div class="system-log">
-                &gt; SYSTEM: ONLINE<br>
+                &gt; SYSTEM: <span class="log-green">ONLINE</span><br>
                 &gt; CORE: GHOST_Y2K_V2.0<br>
-                &gt; STATUS: ENCRYPTED
+                &gt; NETWORK: SECURED // VOID NODE
             </div>
         </div>
     </div>
@@ -393,19 +428,41 @@
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
-        // Spider Animation (Bottom Right)
+        // Fetch IP City and Weather
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(locationData => {
+                const city = locationData.city || locationData.region || "UNKNOWN";
+                const lat = locationData.latitude;
+                const lon = locationData.longitude;
+
+                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                    .then(res => res.json())
+                    .then(weatherData => {
+                        const temp = Math.round(weatherData.current_weather.temperature);
+                        document.getElementById('weatherBox').innerHTML = `☁ ${city.toUpperCase()} // ${temp}°C`;
+                    })
+                    .catch(() => {
+                        document.getElementById('weatherBox').innerHTML = `☁ ${city.toUpperCase()}`;
+                    });
+            })
+            .catch(() => {
+                document.getElementById('weatherBox').innerHTML = `☁ VOID ZONE // --°C`;
+            });
+
+        // Fixed Spider Animation
         const spiderBox = document.getElementById('spiderBox');
         const spiderThread = document.getElementById('spiderThread');
         const spiderIcon = document.getElementById('spiderIcon');
 
         spiderBox.addEventListener('mouseenter', () => {
-            spiderThread.style.height = '10px';
+            spiderThread.style.height = '5px';
             spiderIcon.style.fill = '#fff';
             spiderIcon.style.transform = 'scale(1.25)';
         });
 
         spiderBox.addEventListener('mouseleave', () => {
-            spiderThread.style.height = '40px';
+            spiderThread.style.height = '35px';
             spiderIcon.style.fill = '#aaa';
             spiderIcon.style.transform = 'scale(1)';
         });
@@ -466,11 +523,11 @@
                 elem.style.opacity = 0;
                 setTimeout(() => {
                     elem.innerText = quotesPool[Math.floor(Math.random() * quotesPool.length)];
-                    elem.style.opacity = 0.8;
+                    elem.style.opacity = 0.95;
                 }, 1000);
             }
             cycleQuote();
-            setInterval(cycleQuote, 3500 + (index * 1200)); // Independent random timings
+            setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
         // Saved Clicker Score
@@ -538,13 +595,13 @@
             }
         }
 
-        // Continuous Repeating Scroll Observer (Triggers every time in view)
+        // Repeating Scroll Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
                 } else {
-                    entry.target.classList.remove('active'); // Resets animation when scrolled away
+                    entry.target.classList.remove('active');
                 }
             });
         }, { threshold: 0.25 });
