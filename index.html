@@ -23,7 +23,7 @@
             top: 0; left: 0;
             width: 280px; height: 280px;
             margin-left: -140px; margin-top: -140px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
             pointer-events: none;
             z-index: 9999;
         }
@@ -34,7 +34,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1;
-            opacity: 0.12;
+            opacity: 0.15;
             pointer-events: none;
         }
 
@@ -53,19 +53,36 @@
             z-index: 2;
         }
 
-        /* Floating Gothic Quotes (Side Text) */
-        .floating-quote {
+        /* Neon Glow Floating Side Quotes */
+        .quote-column {
             position: fixed;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 2px;
-            text-transform: lowercase;
+            top: 0;
+            width: 220px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
             pointer-events: none;
             z-index: 4;
-            transition: opacity 1.5s ease, transform 1.5s ease;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .quote-left-col { left: 20px; }
+        .quote-right-col { right: 20px; text-align: right; }
+
+        .side-quote {
+            font-size: 11px;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            text-shadow: 0 0 8px #fff, 0 0 15px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transition: opacity 1.2s ease, transform 1.2s ease;
             white-space: nowrap;
         }
+
+        .side-quote.indent-1 { transform: translateX(15px); }
+        .side-quote.indent-2 { transform: translateX(-10px); }
+        .side-quote.indent-3 { transform: translateX(25px); }
 
         /* Section Layout */
         .section {
@@ -76,12 +93,13 @@
             position: relative;
             z-index: 3;
             padding: 60px 20px;
+            perspective: 1000px;
         }
 
         /* Y2K Dark Card Base */
         .card {
             position: relative;
-            background: rgba(8, 8, 10, 0.92);
+            background: rgba(8, 8, 10, 0.94);
             border: 2px solid #222;
             padding: 45px 35px;
             width: 390px;
@@ -89,32 +107,33 @@
             border-radius: 6px;
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(8px);
-            transition: all 0.5s ease;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Fixed Spider (Bug-Free JS Animated) */
-        .spider-box {
+        /* Hanging Spider on Bottom-Right Corner */
+        .spider-box-bottom {
             position: absolute;
-            top: 0;
-            right: 25px;
+            bottom: -55px;
+            right: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 10;
         }
 
-        .spider-thread {
+        .spider-thread-bottom {
             width: 1px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.3);
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
             transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 0 4px #fff;
         }
 
-        .spider-icon {
+        .spider-icon-bottom {
             width: 22px;
             height: 22px;
             fill: #aaa;
-            filter: drop-shadow(0 0 5px #fff);
+            filter: drop-shadow(0 0 6px #fff);
             transition: fill 0.3s ease, transform 0.3s ease;
             cursor: pointer;
         }
@@ -253,15 +272,26 @@
             box-shadow: 0 0 15px #fff;
         }
 
-        /* Scroll Animation */
+        /* Repeating Scroll Animation Classes */
         .reveal-card {
             opacity: 0;
-            transform: translateY(50px) scale(0.95);
+            transform: translateY(70px) scale(0.9) rotateX(15deg);
         }
 
         .reveal-card.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+
+        /* System Status Log (Bottom Area) */
+        .system-log {
+            font-size: 10px;
+            color: #555;
+            text-align: left;
+            margin-top: 15px;
+            line-height: 1.6;
+            border-top: 1px solid #222;
+            padding-top: 10px;
         }
     </style>
 </head>
@@ -271,21 +301,22 @@
     <div class="scanlines"></div>
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- Side Quotes Container -->
-    <div id="quote-left" class="floating-quote" style="left: 40px; top: 40%;"></div>
-    <div id="quote-right" class="floating-quote" style="right: 40px; top: 60%;"></div>
+    <!-- Side Neon Quotes Columns -->
+    <div class="quote-column quote-left-col">
+        <div class="side-quote indent-1" id="lq1"></div>
+        <div class="side-quote indent-2" id="lq2"></div>
+        <div class="side-quote indent-3" id="lq3"></div>
+    </div>
+
+    <div class="quote-column quote-right-col">
+        <div class="side-quote indent-2" id="rq1"></div>
+        <div class="side-quote indent-1" id="rq2"></div>
+        <div class="side-quote indent-3" id="rq3"></div>
+    </div>
 
     <!-- SECTION 1: PROFILE -->
     <div class="section" id="sec1">
-        <div class="card">
-            <!-- Bug-Free JS Animated Spider -->
-            <div class="spider-box" id="spiderBox">
-                <div class="spider-thread" id="spiderThread"></div>
-                <svg class="spider-icon" id="spiderIcon" viewBox="0 0 24 24">
-                    <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
-                </svg>
-            </div>
-
+        <div class="card reveal-card active">
             <!-- Single Butterfly -->
             <svg class="butterfly-svg" viewBox="0 0 24 24">
                 <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
@@ -300,6 +331,14 @@
                 </svg>
                 ENTER VOID (DISCORD)
             </a>
+
+            <!-- Hanging Spider on Bottom-Right -->
+            <div class="spider-box-bottom" id="spiderBox">
+                <div class="spider-thread-bottom" id="spiderThread"></div>
+                <svg class="spider-icon-bottom" id="spiderIcon" viewBox="0 0 24 24">
+                    <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
+                </svg>
+            </div>
         </div>
         <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
     </div>
@@ -318,7 +357,7 @@
         </div>
     </div>
 
-    <!-- SECTION 3: PATTERN MEMORY MINIGAME -->
+    <!-- SECTION 3: PATTERN MEMORY MINIGAME & LOGS -->
     <div class="section" id="sec3">
         <div class="card reveal-card">
             <h1>void pattern</h1>
@@ -338,6 +377,12 @@
 
                 <button class="click-btn" onclick="startPatternGame()">START PATTERN</button>
             </div>
+
+            <div class="system-log">
+                &gt; SYSTEM: ONLINE<br>
+                &gt; CORE: GHOST_Y2K_V2.0<br>
+                &gt; STATUS: ENCRYPTED
+            </div>
         </div>
     </div>
 
@@ -348,19 +393,19 @@
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
-        // Bug-Free Spider Animation
+        // Spider Animation (Bottom Right)
         const spiderBox = document.getElementById('spiderBox');
         const spiderThread = document.getElementById('spiderThread');
         const spiderIcon = document.getElementById('spiderIcon');
 
         spiderBox.addEventListener('mouseenter', () => {
-            spiderThread.style.height = '15px';
+            spiderThread.style.height = '10px';
             spiderIcon.style.fill = '#fff';
-            spiderIcon.style.transform = 'scale(1.2)';
+            spiderIcon.style.transform = 'scale(1.25)';
         });
 
         spiderBox.addEventListener('mouseleave', () => {
-            spiderThread.style.height = '45px';
+            spiderThread.style.height = '40px';
             spiderIcon.style.fill = '#aaa';
             spiderIcon.style.transform = 'scale(1)';
         });
@@ -393,35 +438,42 @@
         }
         setInterval(drawMatrix, 33);
 
-        // Floating Gothic Quotes
-        const quotes = [
+        // Async Independent Floating Quotes
+        const quotesPool = [
             "lost in cyber space...",
             "stars bleed in silence.",
             "into the endless void.",
             "we are digital ghosts.",
             "dancing in the shadows.",
             "gothic energy online.",
-            "memories faded in 2000."
+            "memories faded in 2000.",
+            "forever in the dark.",
+            "whispers of the void.",
+            "cold digital rain."
         ];
 
-        function rotateQuotes() {
-            const leftElem = document.getElementById('quote-left');
-            const rightElem = document.getElementById('quote-right');
+        const quoteElems = [
+            document.getElementById('lq1'),
+            document.getElementById('lq2'),
+            document.getElementById('lq3'),
+            document.getElementById('rq1'),
+            document.getElementById('rq2'),
+            document.getElementById('rq3')
+        ];
 
-            leftElem.style.opacity = 0;
-            rightElem.style.opacity = 0;
+        quoteElems.forEach((elem, index) => {
+            function cycleQuote() {
+                elem.style.opacity = 0;
+                setTimeout(() => {
+                    elem.innerText = quotesPool[Math.floor(Math.random() * quotesPool.length)];
+                    elem.style.opacity = 0.8;
+                }, 1000);
+            }
+            cycleQuote();
+            setInterval(cycleQuote, 3500 + (index * 1200)); // Independent random timings
+        });
 
-            setTimeout(() => {
-                leftElem.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-                rightElem.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-                leftElem.style.opacity = 0.5;
-                rightElem.style.opacity = 0.5;
-            }, 1500);
-        }
-        rotateQuotes();
-        setInterval(rotateQuotes, 6000);
-
-        // Permanent Saved Clicker
+        // Saved Clicker Score
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
         document.getElementById('local-score').innerText = savedScore;
 
@@ -431,7 +483,7 @@
             document.getElementById('local-score').innerText = savedScore;
         }
 
-        // Pattern Minigame Logic
+        // Pattern Minigame
         let sequence = [];
         let playerSequence = [];
         let isPlaying = false;
@@ -486,14 +538,16 @@
             }
         }
 
-        // Scroll Observer
+        // Continuous Repeating Scroll Observer (Triggers every time in view)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active'); // Resets animation when scrolled away
                 }
             });
-        }, { threshold: 0.2 });
+        }, { threshold: 0.25 });
 
         document.querySelectorAll('.reveal-card').forEach(card => {
             observer.observe(card);
