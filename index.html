@@ -7,14 +7,31 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html { scroll-behavior: smooth; }
-
         body {
             background-color: #000;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             overflow-x: hidden;
             cursor: crosshair;
+        }
+
+        /* Top-Left Gentle Weather Badge */
+        .top-left-weather {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0 0 6px #fff, 0 0 12px rgba(255, 255, 255, 0.6);
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.85;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 10px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         /* Mouse Glow */
@@ -34,8 +51,19 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1;
-            opacity: 0.15;
+            opacity: 0.12;
             pointer-events: none;
+        }
+
+        /* Blood Fill Overlay (Rises as clicks increase) */
+        #blood-overlay {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%; height: 0%;
+            background: linear-gradient(to top, rgba(80, 0, 0, 0.65) 0%, rgba(20, 0, 0, 0.3) 70%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
+            transition: height 0.5s ease-out;
         }
 
         /* CRT Scanlines Overlay */
@@ -50,10 +78,10 @@
                 transparent 3px
             );
             pointer-events: none;
-            z-index: 2;
+            z-index: 3;
         }
 
-        /* Neon Glow Floating Side Quotes */
+        /* Side Quotes */
         .quote-column {
             position: fixed;
             top: 0;
@@ -63,7 +91,7 @@
             flex-direction: column;
             justify-content: space-around;
             pointer-events: none;
-            z-index: 4;
+            z-index: 5;
         }
 
         .quote-left-col { left: 20px; }
@@ -84,19 +112,33 @@
         .side-quote.indent-2 { transform: translateX(-10px); }
         .side-quote.indent-3 { transform: translateX(25px); }
 
-        /* Section Layout */
+        /* Smooth Scroll Wrapper */
+        #viewport {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 4;
+        }
+
+        #content-scroll {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            will-change: transform;
+        }
+
         .section {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            z-index: 3;
             padding: 60px 20px;
             perspective: 1000px;
         }
 
-        /* Y2K Dark Card Base */
+        /* Card Base */
         .card {
             position: relative;
             background: rgba(8, 8, 10, 0.95);
@@ -111,22 +153,7 @@
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Neon Weather Widget */
-        .weather-badge {
-            font-size: 11px;
-            letter-spacing: 2.5px;
-            color: #fff;
-            text-transform: uppercase;
-            text-shadow: 0 0 8px #fff, 0 0 15px rgba(255, 255, 255, 0.8);
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-            padding: 8px 14px;
-            display: inline-block;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.6);
-        }
-
-        /* Fixed Spider (Climbs UP on Hover) */
+        /* Spider */
         .spider-box-bottom {
             position: absolute;
             bottom: -50px;
@@ -154,7 +181,7 @@
             cursor: pointer;
         }
 
-        /* Center Butterfly Logo */
+        /* Butterfly Logo */
         .butterfly-svg {
             width: 50px;
             height: auto;
@@ -227,68 +254,74 @@
             to { transform: translateY(-8px); opacity: 1; }
         }
 
-        /* Gothic Boxes for Minigames */
+        /* Gothic Boxes */
         .gothic-box {
+            position: relative;
             background: #000;
             border: 1px dashed #555;
             padding: 22px;
             border-radius: 4px;
             margin-top: 15px;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
+            overflow: hidden;
         }
 
         .click-btn {
             background: #000;
             color: #fff;
             border: 1px solid #888;
-            padding: 12px 25px;
+            padding: 14px 25px;
             font-family: inherit;
             font-size: 12px;
             letter-spacing: 1.5px;
             cursor: pointer;
             margin-top: 15px;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease, background 0.2s ease, border-color 0.2s ease;
             width: 100%;
+            user-select: none;
         }
 
         .click-btn:hover {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 0 15px #fff;
-        }
-
-        /* Pattern Minigame Grid */
-        .pattern-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .pattern-node {
             background: #111;
-            border: 1px solid #333;
-            height: 55px;
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Lockpick Game Dial */
+        .lock-container {
+            width: 140px;
+            height: 140px;
+            border: 2px solid #444;
+            border-radius: 50%;
+            margin: 15px auto;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            background: #08080a;
         }
 
-        .pattern-node:hover {
-            border-color: #fff;
-            background: #222;
+        .lock-target {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #fff;
+            box-shadow: 0 0 10px #fff;
         }
 
-        .pattern-node.active {
+        .lock-pointer {
+            position: absolute;
+            width: 2px;
+            height: 60px;
             background: #fff;
-            color: #000;
-            box-shadow: 0 0 15px #fff;
+            top: 10px;
+            transform-origin: bottom center;
+            box-shadow: 0 0 8px #fff;
         }
 
-        /* Scroll Animations */
+        /* Scroll Animation Classes */
         .reveal-card {
             opacity: 0;
             transform: translateY(70px) scale(0.9) rotateX(15deg);
@@ -315,15 +348,35 @@
         }
 
         .log-green { color: #fff; text-shadow: 0 0 8px #fff; }
+
+        /* Blood Splatter Particle */
+        .blood-particle {
+            position: absolute;
+            pointer-events: none;
+            background: #800000;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #ff0000;
+            z-index: 20;
+            animation: particleFade 0.6s forwards ease-out;
+        }
+
+        @keyframes particleFade {
+            0% { opacity: 1; transform: scale(1) translate(0, 0); }
+            100% { opacity: 0; transform: scale(0.2) translate(var(--dx), var(--dy)); }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Gentle Top-Left Weather -->
+    <div class="top-left-weather" id="weatherBox">☁ LOCATING...</div>
+
     <div id="cursor-glow"></div>
+    <div id="blood-overlay"></div>
     <div class="scanlines"></div>
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- Side Neon Quotes Columns -->
+    <!-- Side Quotes -->
     <div class="quote-column quote-left-col">
         <div class="side-quote indent-1" id="lq1"></div>
         <div class="side-quote indent-2" id="lq2"></div>
@@ -336,99 +389,140 @@
         <div class="side-quote indent-3" id="rq3"></div>
     </div>
 
-    <!-- SECTION 1: PROFILE -->
-    <div class="section" id="sec1">
-        <div class="card reveal-card active">
-            <!-- Neon Glow Weather & Location Badge -->
-            <div class="weather-badge" id="weatherBox">
-                ☁ LOCATING...
-            </div>
+    <!-- Smooth Viewport Wrapper -->
+    <div id="viewport">
+        <div id="content-scroll">
 
-            <br>
+            <!-- SECTION 1: PROFILE -->
+            <div class="section" id="sec1">
+                <div class="card reveal-card active">
+                    <svg class="butterfly-svg" viewBox="0 0 24 24">
+                        <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
+                    </svg>
 
-            <!-- Butterfly Logo -->
-            <svg class="butterfly-svg" viewBox="0 0 24 24">
-                <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
-            </svg>
+                    <h1>y.1q.</h1>
+                    <div class="subtitle">✦ 𐕣 GHOST // Y2K GOTHIC 𐕣 ✦</div>
 
-            <h1>y.1q.</h1>
-            <div class="subtitle">✦ 𐕣 GHOST // Y2K GOTHIC 𐕣 ✦</div>
+                    <a href="https://discord.com/users/SENIN_DISCORD_ID_NUMARAN" target="_blank" class="dc-btn">
+                        <svg class="dc-icon" viewBox="0 0 127.14 96.36">
+                            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
+                        </svg>
+                        ENTER VOID (DISCORD)
+                    </a>
 
-            <a href="https://discord.com/users/SENIN_DISCORD_ID_NUMARAN" target="_blank" class="dc-btn">
-                <svg class="dc-icon" viewBox="0 0 127.14 96.36">
-                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
-                </svg>
-                ENTER VOID (DISCORD)
-            </a>
-
-            <!-- Spider (Climbs UP) -->
-            <div class="spider-box-bottom" id="spiderBox">
-                <div class="spider-thread-bottom" id="spiderThread"></div>
-                <svg class="spider-icon-bottom" id="spiderIcon" viewBox="0 0 24 24">
-                    <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
-                </svg>
-            </div>
-        </div>
-        <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
-    </div>
-
-    <!-- SECTION 2: CLICKER -->
-    <div class="section" id="sec2">
-        <div class="card reveal-card">
-            <h1>soul harvest</h1>
-            <div class="subtitle">✦ PERMANENT SAVED SYSTEM ✦</div>
-            
-            <div class="gothic-box">
-                <p style="font-size: 10px; color: #888; letter-spacing: 2px;">LOCAL SAVED HARVEST</p>
-                <h2 id="local-score" style="font-size: 38px; margin: 12px 0; color: #fff; text-shadow: 0 0 12px #fff;">0</h2>
-                <button class="click-btn" onclick="addLocalScore()">HARVEST SOUL 𐕣</button>
-            </div>
-
-            <div class="system-log">
-                STATUS: <span class="log-green">ACTIVE</span><br>
-                RANK: <span style="color: #fff;">VOID WALKER</span><br>
-                ENCRYPTION: 256-BIT Y2K
-            </div>
-        </div>
-    </div>
-
-    <!-- SECTION 3: PATTERN MEMORY -->
-    <div class="section" id="sec3">
-        <div class="card reveal-card">
-            <h1>void pattern</h1>
-            <div class="subtitle">✦ GOTHIC MEMORY SYSTEM ✦</div>
-            
-            <div class="gothic-box">
-                <p id="game-status" style="font-size: 11px; color: #ccc;">PRESS START TO BEGIN</p>
-                
-                <div class="pattern-grid">
-                    <div class="pattern-node" onclick="nodeClick(0)">𐕣</div>
-                    <div class="pattern-node" onclick="nodeClick(1)">✦</div>
-                    <div class="pattern-node" onclick="nodeClick(2)">🕷</div>
-                    <div class="pattern-node" onclick="nodeClick(3)">🦋</div>
-                    <div class="pattern-node" onclick="nodeClick(4)">⚔</div>
-                    <div class="pattern-node" onclick="nodeClick(5)">☠</div>
+                    <!-- Spider -->
+                    <div class="spider-box-bottom" id="spiderBox">
+                        <div class="spider-thread-bottom" id="spiderThread"></div>
+                        <svg class="spider-icon-bottom" id="spiderIcon" viewBox="0 0 24 24">
+                            <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
+                        </svg>
+                    </div>
                 </div>
-
-                <button class="click-btn" onclick="startPatternGame()">START PATTERN</button>
+                <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
             </div>
 
-            <div class="system-log">
-                &gt; SYSTEM: <span class="log-green">ONLINE</span><br>
-                &gt; CORE: GHOST_Y2K_V2.0<br>
-                &gt; NETWORK: SECURED // VOID NODE
+            <!-- SECTION 2: HARVEST CLICKER -->
+            <div class="section" id="sec2">
+                <div class="card reveal-card">
+                    <h1>soul harvest</h1>
+                    <div class="subtitle">✦ PERMANENT SAVED SYSTEM ✦</div>
+                    
+                    <div class="gothic-box" id="clickerBox">
+                        <p style="font-size: 10px; color: #888; letter-spacing: 2px;">LOCAL SAVED HARVEST</p>
+                        <h2 id="local-score" style="font-size: 38px; margin: 12px 0; color: #fff; text-shadow: 0 0 12px #fff; transition: text-shadow 0.1s ease;">0</h2>
+                        <button class="click-btn" id="harvestBtn" onclick="addLocalScore(event)">HARVEST SOUL 𐕣</button>
+                    </div>
+
+                    <div class="system-log">
+                        STATUS: <span class="log-green">ACTIVE</span><br>
+                        RANK: <span style="color: #fff;" id="rankText">VOID WALKER</span><br>
+                        BLOOD LEVEL: <span id="bloodLevelText" style="color: #ff3333;">0%</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- SECTION 3: CYBER LOCKPICK MINIGAME -->
+            <div class="section" id="sec3">
+                <div class="card reveal-card">
+                    <h1>cyber lockpick</h1>
+                    <div class="subtitle">✦ TIMING HACK SYSTEM ✦</div>
+                    
+                    <div class="gothic-box">
+                        <p id="lockStatus" style="font-size: 11px; color: #ccc;">STOP THE DIAL INSIDE TARGET ZONE</p>
+                        
+                        <div class="lock-container" id="lockDial">
+                            <div class="lock-target" id="lockTarget"></div>
+                            <div class="lock-pointer" id="lockPointer"></div>
+                        </div>
+
+                        <button class="click-btn" onclick="tryUnlock()">UNLOCK NODE 🔓</button>
+                    </div>
+
+                    <div class="system-log">
+                        &gt; SYSTEM: <span class="log-green">ONLINE</span><br>
+                        &gt; CORE: GHOST_Y2K_V2.0<br>
+                        &gt; LOCK STATUS: <span id="lockLog" style="color: #ffaa00;">ENCRYPTED</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
+        // Kinetic Smooth Scroll
+        let currentScroll = 0;
+        let targetScroll = 0;
+        const scrollContent = document.getElementById('content-scroll');
+
+        window.addEventListener('wheel', (e) => {
+            targetScroll += e.deltaY * 0.85;
+            const maxScroll = scrollContent.clientHeight - window.innerHeight;
+            targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+        }, { passive: true });
+
+        function animateScroll() {
+            currentScroll += (targetScroll - currentScroll) * 0.08;
+            scrollContent.style.transform = `translate3d(0, -${currentScroll}px, 0)`;
+            
+            // Trigger Reveal Elements based on smooth position
+            document.querySelectorAll('.reveal-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+
+            requestAnimationFrame(animateScroll);
+        }
+        animateScroll();
+
+        // Audio Synth Engine (Cyber Sound Effects)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playCyberSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
         // Cursor Glow
         const glow = document.getElementById('cursor-glow');
         window.addEventListener('mousemove', (e) => {
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
-        // Fetch IP City and Weather
+        // Weather Fetch
         fetch('https://ipapi.co/json/')
             .then(res => res.json())
             .then(locationData => {
@@ -440,17 +534,17 @@
                     .then(res => res.json())
                     .then(weatherData => {
                         const temp = Math.round(weatherData.current_weather.temperature);
-                        document.getElementById('weatherBox').innerHTML = `☁ ${city.toUpperCase()} // ${temp}°C`;
+                        document.getElementById('weatherBox').innerText = `☁ ${city.toUpperCase()} // ${temp}°C`;
                     })
                     .catch(() => {
-                        document.getElementById('weatherBox').innerHTML = `☁ ${city.toUpperCase()}`;
+                        document.getElementById('weatherBox').innerText = `☁ ${city.toUpperCase()}`;
                     });
             })
             .catch(() => {
-                document.getElementById('weatherBox').innerHTML = `☁ VOID ZONE // --°C`;
+                document.getElementById('weatherBox').innerText = `☁ VOID ZONE // --°C`;
             });
 
-        // Fixed Spider Animation
+        // Spider Animation
         const spiderBox = document.getElementById('spiderBox');
         const spiderThread = document.getElementById('spiderThread');
         const spiderIcon = document.getElementById('spiderIcon');
@@ -495,7 +589,7 @@
         }
         setInterval(drawMatrix, 33);
 
-        // Async Independent Floating Quotes
+        // Side Floating Quotes
         const quotesPool = [
             "lost in cyber space...",
             "stars bleed in silence.",
@@ -530,85 +624,98 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // Saved Clicker Score
+        // Clicker Engine & Blood Effects
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
-        document.getElementById('local-score').innerText = savedScore;
+        const scoreElem = document.getElementById('local-score');
+        const harvestBtn = document.getElementById('harvestBtn');
+        const bloodOverlay = document.getElementById('blood-overlay');
+        const bloodLevelText = document.getElementById('bloodLevelText');
+        
+        function updateBlood() {
+            scoreElem.innerText = savedScore;
+            let fillPercent = Math.min(savedScore * 1.5, 85); // Max 85% screen height
+            bloodOverlay.style.height = fillPercent + '%';
+            bloodLevelText.innerText = Math.round(fillPercent) + '%';
+        }
+        updateBlood();
 
-        function addLocalScore() {
+        function addLocalScore(e) {
             savedScore++;
             localStorage.setItem('y1q_harvest_score', savedScore);
-            document.getElementById('local-score').innerText = savedScore;
-        }
+            updateBlood();
+            playCyberSound();
 
-        // Pattern Minigame
-        let sequence = [];
-        let playerSequence = [];
-        let isPlaying = false;
-        const nodes = document.querySelectorAll('.pattern-node');
-        const statusText = document.getElementById('game-status');
+            // Number Glow FX
+            scoreElem.style.textShadow = '0 0 25px #fff, 0 0 35px #ff0000';
+            setTimeout(() => scoreElem.style.textShadow = '0 0 12px #fff', 150);
 
-        function startPatternGame() {
-            sequence = [];
-            playerSequence = [];
-            isPlaying = true;
-            nextRound();
-        }
+            // Button Tilt FX
+            const deg = (Math.random() - 0.5) * 12;
+            harvestBtn.style.transform = `scale(0.96) rotate(${deg}deg)`;
+            setTimeout(() => harvestBtn.style.transform = 'scale(1) rotate(0deg)', 100);
 
-        function nextRound() {
-            playerSequence = [];
-            sequence.push(Math.floor(Math.random() * 6));
-            statusText.innerText = "WATCH PATTERN...";
-            playSequence();
-        }
-
-        function playSequence() {
-            let i = 0;
-            const interval = setInterval(() => {
-                flashNode(sequence[i]);
-                i++;
-                if (i >= sequence.length) {
-                    clearInterval(interval);
-                    statusText.innerText = "YOUR TURN!";
-                }
-            }, 600);
-        }
-
-        function flashNode(index) {
-            nodes[index].classList.add('active');
-            setTimeout(() => nodes[index].classList.remove('active'), 300);
-        }
-
-        function nodeClick(index) {
-            if (!isPlaying) return;
-            flashNode(index);
-            playerSequence.push(index);
-
-            if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
-                statusText.innerText = "WRONG! GAME OVER.";
-                isPlaying = false;
-                return;
-            }
-
-            if (playerSequence.length === sequence.length) {
-                statusText.innerText = "CORRECT! NEXT LEVEL...";
-                setTimeout(nextRound, 1000);
+            // Blood Particle FX
+            const box = document.getElementById('clickerBox');
+            const rect = box.getBoundingClientRect();
+            for (let i = 0; i < 6; i++) {
+                const p = document.createElement('div');
+                p.className = 'blood-particle';
+                const size = Math.random() * 6 + 4;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = (e.clientX - rect.left) + 'px';
+                p.style.top = (e.clientY - rect.top) + 'px';
+                p.style.setProperty('--dx', (Math.random() - 0.5) * 100 + 'px');
+                p.style.setProperty('--dy', (Math.random() - 0.5) * 100 + 'px');
+                box.appendChild(p);
+                setTimeout(() => p.remove(), 600);
             }
         }
 
-        // Repeating Scroll Observer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                } else {
-                    entry.target.classList.remove('active');
-                }
-            });
-        }, { threshold: 0.25 });
+        // Cyber Lockpick Minigame
+        let angle = 0;
+        let targetAngle = Math.random() * 280 + 40; // Random angle 40 to 320
+        const pointer = document.getElementById('lockPointer');
+        const target = document.getElementById('lockTarget');
+        const lockStatus = document.getElementById('lockStatus');
+        const lockLog = document.getElementById('lockLog');
 
-        document.querySelectorAll('.reveal-card').forEach(card => {
-            observer.observe(card);
-        });
+        function positionTarget() {
+            const rad = (targetAngle - 90) * (Math.PI / 180);
+            const r = 50; // Radius
+            const x = 70 + r * Math.cos(rad) - 12.5;
+            const y = 70 + r * Math.sin(rad) - 12.5;
+            target.style.left = x + 'px';
+            target.style.top = y + 'px';
+        }
+        positionTarget();
+
+        function rotateDial() {
+            angle = (angle + 3) % 360;
+            pointer.style.transform = `rotate(${angle}deg)`;
+            requestAnimationFrame(rotateDial);
+        }
+        rotateDial();
+
+        function tryUnlock() {
+            playCyberSound();
+            let diff = Math.abs(angle - targetAngle);
+            if (diff > 180) diff = 360 - diff;
+
+            if (diff < 20) {
+                lockStatus.innerText = "SUCCESS! NODE UNLOCKED 𐕣";
+                lockStatus.style.color = "#00ffcc";
+                lockLog.innerText = "BYPASSED";
+                lockLog.style.color = "#00ffcc";
+                targetAngle = Math.random() * 280 + 40;
+                positionTarget();
+            } else {
+                lockStatus.innerText = "FAILED! TRY AGAIN...";
+                lockStatus.style.color = "#ff3333";
+                lockLog.innerText = "DENIED";
+                lockLog.style.color = "#ff3333";
+            }
+        }
     </script>
 </body>
 </html>
