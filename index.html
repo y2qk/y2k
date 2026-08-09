@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>y.1q. // Y2K Cyber Goth Zone</title>
+    <title>y.1q. // Y2K Gothic Void</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             background-color: #000;
@@ -55,7 +53,21 @@
             z-index: 2;
         }
 
-        /* Section Layout for Transitions */
+        /* Floating Gothic Quotes (Side Text) */
+        .floating-quote {
+            position: fixed;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            pointer-events: none;
+            z-index: 4;
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+        }
+
+        /* Section Layout */
         .section {
             min-height: 100vh;
             display: flex;
@@ -63,8 +75,7 @@
             align-items: center;
             position: relative;
             z-index: 3;
-            padding: 40px 20px;
-            perspective: 1000px;
+            padding: 60px 20px;
         }
 
         /* Y2K Dark Card Base */
@@ -78,13 +89,13 @@
             border-radius: 6px;
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(8px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s ease;
         }
 
-        /* Hanging Spider Animation on Top-Right Corner */
-        .hanging-spider-container {
+        /* Fixed Spider (Bug-Free JS Animated) */
+        .spider-box {
             position: absolute;
-            top: -2px;
+            top: 0;
             right: 25px;
             display: flex;
             flex-direction: column;
@@ -92,30 +103,20 @@
             z-index: 10;
         }
 
-        .spider-web-line {
+        .spider-thread {
             width: 1px;
             height: 45px;
-            background: linear-gradient(to bottom, #888, #333);
-            transition: height 0.3s ease;
+            background: rgba(255, 255, 255, 0.3);
+            transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .spider-svg {
-            width: 24px;
-            height: 24px;
+        .spider-icon {
+            width: 22px;
+            height: 22px;
             fill: #aaa;
             filter: drop-shadow(0 0 5px #fff);
-            transition: all 0.3s ease;
+            transition: fill 0.3s ease, transform 0.3s ease;
             cursor: pointer;
-        }
-
-        .hanging-spider-container:hover .spider-web-line {
-            height: 20px; /* Pulls up on hover */
-        }
-
-        .hanging-spider-container:hover .spider-svg {
-            fill: #fff;
-            filter: drop-shadow(0 0 12px #fff);
-            transform: scale(1.2) rotate(15deg);
         }
 
         /* Center Butterfly Logo */
@@ -175,15 +176,11 @@
             border-color: #fff;
         }
 
-        .dc-icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
+        .dc-icon { width: 20px; height: 20px; fill: currentColor; }
 
         .scroll-hint {
             position: absolute;
-            bottom: 25px;
+            bottom: 20px;
             font-size: 10px;
             color: #666;
             letter-spacing: 3px;
@@ -195,11 +192,11 @@
             to { transform: translateY(-8px); opacity: 1; }
         }
 
-        /* Section 2: Gothic Clicker System */
+        /* Gothic Boxes for Minigames */
         .gothic-box {
             background: #000;
             border: 1px dashed #444;
-            padding: 25px;
+            padding: 20px;
             border-radius: 4px;
             margin-top: 15px;
             box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
@@ -225,19 +222,46 @@
             box-shadow: 0 0 15px #fff;
         }
 
-        .click-btn:active {
-            transform: scale(0.96);
+        /* Pattern Minigame Grid */
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        /* Scroll Animation States */
+        .pattern-node {
+            background: #111;
+            border: 1px solid #333;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pattern-node:hover {
+            border-color: #fff;
+            background: #222;
+        }
+
+        .pattern-node.active {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* Scroll Animation */
         .reveal-card {
             opacity: 0;
-            transform: translateY(60px) scale(0.9) rotateX(15deg);
+            transform: translateY(50px) scale(0.95);
         }
 
         .reveal-card.active {
             opacity: 1;
-            transform: translateY(0) scale(1) rotateX(0deg);
+            transform: translateY(0) scale(1);
         }
     </style>
 </head>
@@ -247,18 +271,22 @@
     <div class="scanlines"></div>
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- SECTION 1: MAIN PROFILE CARD -->
+    <!-- Side Quotes Container -->
+    <div id="quote-left" class="floating-quote" style="left: 40px; top: 40%;"></div>
+    <div id="quote-right" class="floating-quote" style="right: 40px; top: 60%;"></div>
+
+    <!-- SECTION 1: PROFILE -->
     <div class="section" id="sec1">
         <div class="card">
-            <!-- Hanging Spider Corner Element -->
-            <div class="hanging-spider-container">
-                <div class="spider-web-line"></div>
-                <svg class="spider-svg" viewBox="0 0 24 24">
+            <!-- Bug-Free JS Animated Spider -->
+            <div class="spider-box" id="spiderBox">
+                <div class="spider-thread" id="spiderThread"></div>
+                <svg class="spider-icon" id="spiderIcon" viewBox="0 0 24 24">
                     <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
                 </svg>
             </div>
 
-            <!-- Single Butterfly Graphic -->
+            <!-- Single Butterfly -->
             <svg class="butterfly-svg" viewBox="0 0 24 24">
                 <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
             </svg>
@@ -273,37 +301,77 @@
                 ENTER VOID (DISCORD)
             </a>
         </div>
-        <div class="scroll-hint">▼ SCROLL FOR GOTHIC ZONE ▼</div>
+        <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
     </div>
 
-    <!-- SECTION 2: GOTHIC CLICKER & GLOBAL COUNTER -->
+    <!-- SECTION 2: CLICKER (PERMANENT SAVED) -->
     <div class="section" id="sec2">
-        <div class="card reveal-card" id="card2">
-            <h1>global void</h1>
-            <div class="subtitle">✦ GLOBAL Y2K HARVEST ✦</div>
+        <div class="card reveal-card">
+            <h1>soul harvest</h1>
+            <div class="subtitle">✦ SAVED SYSTEM CLICKS ✦</div>
             
             <div class="gothic-box">
-                <p style="font-size: 10px; color: #666; letter-spacing: 2px;">TOTAL GLOBAL CLICKS</p>
-                <h2 id="global-score" style="font-size: 32px; margin: 12px 0; color: #fff; text-shadow: 0 0 8px #fff;">LOADING...</h2>
-                <button class="click-btn" onclick="addGlobalScore()">HARVEST ENERGY 𐕣</button>
+                <p style="font-size: 10px; color: #666; letter-spacing: 2px;">YOUR SAVED HARVEST</p>
+                <h2 id="local-score" style="font-size: 36px; margin: 12px 0; color: #fff; text-shadow: 0 0 10px #fff;">0</h2>
+                <button class="click-btn" onclick="addLocalScore()">HARVEST SOUL 𐕣</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: PATTERN MEMORY MINIGAME -->
+    <div class="section" id="sec3">
+        <div class="card reveal-card">
+            <h1>void pattern</h1>
+            <div class="subtitle">✦ GOTHIC MEMORY SYSTEM ✦</div>
+            
+            <div class="gothic-box">
+                <p id="game-status" style="font-size: 11px; color: #aaa;">PRESS START TO BEGIN</p>
+                
+                <div class="pattern-grid">
+                    <div class="pattern-node" onclick="nodeClick(0)">𐕣</div>
+                    <div class="pattern-node" onclick="nodeClick(1)">✦</div>
+                    <div class="pattern-node" onclick="nodeClick(2)">🕷</div>
+                    <div class="pattern-node" onclick="nodeClick(3)">🦋</div>
+                    <div class="pattern-node" onclick="nodeClick(4)">⚔</div>
+                    <div class="pattern-node" onclick="nodeClick(5)">☠</div>
+                </div>
+
+                <button class="click-btn" onclick="startPatternGame()">START PATTERN</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Cursor Glow Track
+        // Cursor Glow
         const glow = document.getElementById('cursor-glow');
         window.addEventListener('mousemove', (e) => {
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
-        // Matrix Rain Canvas
+        // Bug-Free Spider Animation
+        const spiderBox = document.getElementById('spiderBox');
+        const spiderThread = document.getElementById('spiderThread');
+        const spiderIcon = document.getElementById('spiderIcon');
+
+        spiderBox.addEventListener('mouseenter', () => {
+            spiderThread.style.height = '15px';
+            spiderIcon.style.fill = '#fff';
+            spiderIcon.style.transform = 'scale(1.2)';
+        });
+
+        spiderBox.addEventListener('mouseleave', () => {
+            spiderThread.style.height = '45px';
+            spiderIcon.style.fill = '#aaa';
+            spiderIcon.style.transform = 'scale(1)';
+        });
+
+        // Matrix Rain
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const chars = '01Y2K_GHOST_X_Q_Z_𐕣';
+        const chars = '01Y2K_GHOST_X_Q_Z_𐕣_✦_☠';
         const fontSize = 12;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -325,52 +393,111 @@
         }
         setInterval(drawMatrix, 33);
 
-        // Smooth Scroll Animations (Intersection Observer)
+        // Floating Gothic Quotes
+        const quotes = [
+            "lost in cyber space...",
+            "stars bleed in silence.",
+            "into the endless void.",
+            "we are digital ghosts.",
+            "dancing in the shadows.",
+            "gothic energy online.",
+            "memories faded in 2000."
+        ];
+
+        function rotateQuotes() {
+            const leftElem = document.getElementById('quote-left');
+            const rightElem = document.getElementById('quote-right');
+
+            leftElem.style.opacity = 0;
+            rightElem.style.opacity = 0;
+
+            setTimeout(() => {
+                leftElem.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+                rightElem.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+                leftElem.style.opacity = 0.5;
+                rightElem.style.opacity = 0.5;
+            }, 1500);
+        }
+        rotateQuotes();
+        setInterval(rotateQuotes, 6000);
+
+        // Permanent Saved Clicker
+        let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
+        document.getElementById('local-score').innerText = savedScore;
+
+        function addLocalScore() {
+            savedScore++;
+            localStorage.setItem('y1q_harvest_score', savedScore);
+            document.getElementById('local-score').innerText = savedScore;
+        }
+
+        // Pattern Minigame Logic
+        let sequence = [];
+        let playerSequence = [];
+        let isPlaying = false;
+        const nodes = document.querySelectorAll('.pattern-node');
+        const statusText = document.getElementById('game-status');
+
+        function startPatternGame() {
+            sequence = [];
+            playerSequence = [];
+            isPlaying = true;
+            nextRound();
+        }
+
+        function nextRound() {
+            playerSequence = [];
+            sequence.push(Math.floor(Math.random() * 6));
+            statusText.innerText = "WATCH PATTERN...";
+            playSequence();
+        }
+
+        function playSequence() {
+            let i = 0;
+            const interval = setInterval(() => {
+                flashNode(sequence[i]);
+                i++;
+                if (i >= sequence.length) {
+                    clearInterval(interval);
+                    statusText.innerText = "YOUR TURN!";
+                }
+            }, 600);
+        }
+
+        function flashNode(index) {
+            nodes[index].classList.add('active');
+            setTimeout(() => nodes[index].classList.remove('active'), 300);
+        }
+
+        function nodeClick(index) {
+            if (!isPlaying) return;
+            flashNode(index);
+            playerSequence.push(index);
+
+            if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
+                statusText.innerText = "WRONG! GAME OVER.";
+                isPlaying = false;
+                return;
+            }
+
+            if (playerSequence.length === sequence.length) {
+                statusText.innerText = "CORRECT! NEXT LEVEL...";
+                setTimeout(nextRound, 1000);
+            }
+        }
+
+        // Scroll Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
 
         document.querySelectorAll('.reveal-card').forEach(card => {
             observer.observe(card);
         });
-
-        // Global Counter API (Shared across all visitors)
-        const namespace = "y1q-ghost-zone-unique";
-        const key = "global-clicks";
-
-        // Fetch Global Score
-        fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.value !== undefined) {
-                    document.getElementById('global-score').innerText = data.value;
-                } else {
-                    // Create if not exists
-                    fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`)
-                        .then(() => document.getElementById('global-score').innerText = "0");
-                }
-            })
-            .catch(() => {
-                document.getElementById('global-score').innerText = "666"; // Fallback display
-            });
-
-        // Add Global Click
-        function addGlobalScore() {
-            fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('global-score').innerText = data.value;
-                })
-                .catch(() => {
-                    let scoreElem = document.getElementById('global-score');
-                    let val = parseInt(scoreElem.innerText) || 0;
-                    scoreElem.innerText = val + 1;
-                });
-        }
     </script>
 </body>
 </html>
