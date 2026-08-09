@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>y.1q. // Y2K Gothic Zone</title>
+    <title>y.1q. // Y2K Cyber Goth Zone</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #000;
             color: #fff;
@@ -19,31 +23,31 @@
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
-            width: 250px; height: 250px;
-            margin-left: -125px; margin-top: -125px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            width: 280px; height: 280px;
+            margin-left: -140px; margin-top: -140px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
             pointer-events: none;
             z-index: 9999;
         }
 
-        /* Matrix Rain Canvas BG */
+        /* Matrix Canvas Background */
         #matrix-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1;
-            opacity: 0.15;
+            opacity: 0.12;
             pointer-events: none;
         }
 
-        /* CRT Overlay */
+        /* CRT Scanlines Overlay */
         .scanlines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: repeating-linear-gradient(
                 0deg,
-                rgba(0, 0, 0, 0.3),
-                rgba(0, 0, 0, 0.3) 1px,
+                rgba(0, 0, 0, 0.35),
+                rgba(0, 0, 0, 0.35) 1px,
                 transparent 1px,
                 transparent 3px
             );
@@ -51,7 +55,7 @@
             z-index: 2;
         }
 
-        /* Section Layout for Smooth Scrolling */
+        /* Section Layout for Transitions */
         .section {
             min-height: 100vh;
             display: flex;
@@ -60,64 +64,89 @@
             position: relative;
             z-index: 3;
             padding: 40px 20px;
+            perspective: 1000px;
         }
 
-        /* Card Base Style */
+        /* Y2K Dark Card Base */
         .card {
-            background: rgba(10, 10, 12, 0.9);
-            border: 1px solid #333;
-            padding: 40px 30px;
-            width: 380px;
+            position: relative;
+            background: rgba(8, 8, 10, 0.92);
+            border: 2px solid #222;
+            padding: 45px 35px;
+            width: 390px;
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(8px);
-            transition: transform 0.5s ease, opacity 0.5s ease;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Bat Graphic SVG */
-        .bat-svg {
-            width: 60px;
-            height: auto;
-            fill: #666;
+        /* Hanging Spider Animation on Top-Right Corner */
+        .hanging-spider-container {
+            position: absolute;
+            top: -2px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .spider-web-line {
+            width: 1px;
+            height: 45px;
+            background: linear-gradient(to bottom, #888, #333);
+            transition: height 0.3s ease;
+        }
+
+        .spider-svg {
+            width: 24px;
+            height: 24px;
+            fill: #aaa;
             filter: drop-shadow(0 0 5px #fff);
             transition: all 0.3s ease;
-            margin-bottom: 10px;
+            cursor: pointer;
         }
 
-        .bat-svg:hover {
+        .hanging-spider-container:hover .spider-web-line {
+            height: 20px; /* Pulls up on hover */
+        }
+
+        .hanging-spider-container:hover .spider-svg {
             fill: #fff;
             filter: drop-shadow(0 0 12px #fff);
-            transform: scale(1.15) rotate(-5deg);
+            transform: scale(1.2) rotate(15deg);
         }
 
-        /* Butterfly SVG */
+        /* Center Butterfly Logo */
         .butterfly-svg {
-            width: 45px;
+            width: 50px;
             height: auto;
-            fill: #aaa;
+            fill: #ccc;
             filter: drop-shadow(0 0 8px #fff);
             margin-bottom: 15px;
-            animation: pulse 2.5s infinite alternate;
+            margin-top: 10px;
+            animation: pulseGlow 3s infinite alternate;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.7; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.05); }
+        @keyframes pulseGlow {
+            0% { opacity: 0.7; filter: drop-shadow(0 0 4px #fff); transform: scale(0.98); }
+            100% { opacity: 1; filter: drop-shadow(0 0 12px #fff); transform: scale(1.03); }
         }
 
         h1 {
-            font-size: 32px;
+            font-size: 34px;
             color: #fff;
-            letter-spacing: 2px;
-            text-shadow: 0 0 5px #fff;
+            letter-spacing: 3px;
+            text-transform: lowercase;
             margin-bottom: 5px;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.8), 2px 2px 0px #111;
         }
 
         .subtitle {
             color: #888;
             font-size: 11px;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             margin-bottom: 25px;
         }
 
@@ -125,9 +154,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background: #000;
             color: #fff;
             text-decoration: none;
@@ -136,52 +165,79 @@
             border: 1px solid #444;
             border-radius: 4px;
             transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
         }
 
         .dc-btn:hover {
             background: #fff;
             color: #000;
-            box-shadow: 0 0 20px #fff;
+            box-shadow: 0 0 25px #fff;
+            border-color: #fff;
+        }
+
+        .dc-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
         }
 
         .scroll-hint {
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             font-size: 10px;
-            color: #555;
-            letter-spacing: 2px;
-            animation: bounce 1.5s infinite alternate;
+            color: #666;
+            letter-spacing: 3px;
+            animation: bounce 1.8s infinite alternate;
         }
 
         @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-8px); }
+            from { transform: translateY(0); opacity: 0.5; }
+            to { transform: translateY(-8px); opacity: 1; }
         }
 
-        /* Minigame Section */
-        .game-box {
+        /* Section 2: Gothic Clicker System */
+        .gothic-box {
             background: #000;
-            border: 1px dashed #555;
-            padding: 20px;
-            border-radius: 6px;
+            border: 1px dashed #444;
+            padding: 25px;
+            border-radius: 4px;
             margin-top: 15px;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
         }
 
         .click-btn {
-            background: #111;
+            background: #000;
             color: #fff;
-            border: 1px solid #fff;
-            padding: 10px 20px;
+            border: 1px solid #888;
+            padding: 12px 25px;
             font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 1.5px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: 0.2s;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .click-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px #fff;
         }
 
         .click-btn:active {
-            transform: scale(0.95);
-            background: #fff;
-            color: #000;
+            transform: scale(0.96);
+        }
+
+        /* Scroll Animation States */
+        .reveal-card {
+            opacity: 0;
+            transform: translateY(60px) scale(0.9) rotateX(15deg);
+        }
+
+        .reveal-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
         }
     </style>
 </head>
@@ -191,57 +247,63 @@
     <div class="scanlines"></div>
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- SECTION 1: MAIN CARD -->
+    <!-- SECTION 1: MAIN PROFILE CARD -->
     <div class="section" id="sec1">
         <div class="card">
-            <!-- Vector Bat Graphic -->
-            <svg class="bat-svg" viewBox="0 0 24 24">
-                <path d="M12 4c-1.5 0-2.8 1.2-3 2.7C7.2 5.6 5 5 3 6c0 0 1.5 3 3 4.5C4 11 2 13 2 16c3.5 0 6.5-2 8-5 1.5 3 4.5 5 8 5 0-3-2-5-4-5.5 1.5-1.5 3-4.5 3-4.5-2-1-4.2-.4-6 .7-.2-1.5-1.5-2.7-3-2.7z"/>
-            </svg>
-            <br>
-            <!-- Vector Butterfly Graphic -->
+            <!-- Hanging Spider Corner Element -->
+            <div class="hanging-spider-container">
+                <div class="spider-web-line"></div>
+                <svg class="spider-svg" viewBox="0 0 24 24">
+                    <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
+                </svg>
+            </div>
+
+            <!-- Single Butterfly Graphic -->
             <svg class="butterfly-svg" viewBox="0 0 24 24">
                 <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
             </svg>
 
             <h1>y.1q.</h1>
-            <div class="subtitle">✦ GHOST // Y2K GOTHIC ✦</div>
+            <div class="subtitle">✦ 𐕣 GHOST // Y2K GOTHIC 𐕣 ✦</div>
 
             <a href="https://discord.com/users/SENIN_DISCORD_ID_NUMARAN" target="_blank" class="dc-btn">
+                <svg class="dc-icon" viewBox="0 0 127.14 96.36">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
+                </svg>
                 ENTER VOID (DISCORD)
             </a>
         </div>
-        <div class="scroll-hint">▼ SCROLL DOWN ▼</div>
+        <div class="scroll-hint">▼ SCROLL FOR GOTHIC ZONE ▼</div>
     </div>
 
-    <!-- SECTION 2: Y2K MINIGAME / EXTRA CONTENT -->
+    <!-- SECTION 2: GOTHIC CLICKER & GLOBAL COUNTER -->
     <div class="section" id="sec2">
-        <div class="card">
-            <h1>y2k zone</h1>
-            <div class="subtitle">✦ MINI CLICKER SYSTEM ✦</div>
+        <div class="card reveal-card" id="card2">
+            <h1>global void</h1>
+            <div class="subtitle">✦ GLOBAL Y2K HARVEST ✦</div>
             
-            <div class="game-box">
-                <p style="font-size: 12px; color: #aaa;">SYSTEM ENERGY</p>
-                <h2 id="score" style="font-size: 28px; margin: 10px 0;">0</h2>
-                <button class="click-btn" onclick="addScore()">CLICK TO HARVEST</button>
+            <div class="gothic-box">
+                <p style="font-size: 10px; color: #666; letter-spacing: 2px;">TOTAL GLOBAL CLICKS</p>
+                <h2 id="global-score" style="font-size: 32px; margin: 12px 0; color: #fff; text-shadow: 0 0 8px #fff;">LOADING...</h2>
+                <button class="click-btn" onclick="addGlobalScore()">HARVEST ENERGY 𐕣</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Cursor Glow
+        // Cursor Glow Track
         const glow = document.getElementById('cursor-glow');
         window.addEventListener('mousemove', (e) => {
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
-        // Matrix Digital Rain
+        // Matrix Rain Canvas
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const chars = '01Y2K_GHOST_X_Q_Z';
+        const chars = '01Y2K_GHOST_X_Q_Z_𐕣';
         const fontSize = 12;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -263,11 +325,51 @@
         }
         setInterval(drawMatrix, 33);
 
-        // Clicker Game
-        let count = 0;
-        function addScore() {
-            count++;
-            document.getElementById('score').innerText = count;
+        // Smooth Scroll Animations (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.reveal-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Global Counter API (Shared across all visitors)
+        const namespace = "y1q-ghost-zone-unique";
+        const key = "global-clicks";
+
+        // Fetch Global Score
+        fetch(`https://api.countapi.xyz/get/${namespace}/${key}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.value !== undefined) {
+                    document.getElementById('global-score').innerText = data.value;
+                } else {
+                    // Create if not exists
+                    fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`)
+                        .then(() => document.getElementById('global-score').innerText = "0");
+                }
+            })
+            .catch(() => {
+                document.getElementById('global-score').innerText = "666"; // Fallback display
+            });
+
+        // Add Global Click
+        function addGlobalScore() {
+            fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('global-score').innerText = data.value;
+                })
+                .catch(() => {
+                    let scoreElem = document.getElementById('global-score');
+                    let val = parseInt(scoreElem.innerText) || 0;
+                    scoreElem.innerText = val + 1;
+                });
         }
     </script>
 </body>
