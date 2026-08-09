@@ -89,7 +89,7 @@
             accent-color: #fff;
         }
 
-        /* GLOW EFEKTİ DÜZELTİLDİ */
+        /* FARE IŞIĞI (FIXED POZİSYON KİLİTLENDİ) */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -102,8 +102,10 @@
             filter: drop-shadow(0 0 10px #fff);
             opacity: 0;
             transition: opacity 0.2s ease;
+            will-change: transform;
         }
 
+        /* FARE İZİ (FIXED POZİSYON KİLİTLENDİ) */
         .trail-particle {
             position: fixed;
             pointer-events: none;
@@ -112,6 +114,7 @@
             text-shadow: 0 0 8px #fff;
             z-index: 9998;
             animation: trailFade 0.6s forwards ease-out;
+            will-change: transform, opacity;
         }
 
         @keyframes trailFade {
@@ -189,7 +192,6 @@
             text-align: center;
         }
 
-        /* SÜRESİ UZATILAN DEAD YAZISI */
         .dead-title {
             font-size: 80px;
             font-weight: 900;
@@ -219,7 +221,7 @@
             cursor: pointer;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
             transition: all 0.3s ease;
-            animation: btnFadeIn 1s ease-out forwards 5.2s; /* YAZI BİTİNCE GELİR */
+            animation: btnFadeIn 1s ease-out forwards 5.2s;
         }
 
         @keyframes btnFadeIn {
@@ -531,7 +533,7 @@
                 <h1>y.1q.</h1>
                 <div class="subtitle">✦ 𐕣 OVERLORD // Y2K CYBER VOID 𐕣 ✦</div>
 
-                <a href="https://discord.gg/7QW73gdMmP" target="_blank" class="dc-btn">
+                <a href="https://discord.gg/byFp2eAXWy" target="_blank" class="dc-btn">
                     <svg class="dc-icon" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
                     </svg>
@@ -583,7 +585,7 @@
                         <p style="font-size: 12px; color: #fff; margin: 10px 0; font-style: italic; line-height: 1.5; text-shadow: 0 0 8px #ff0000;">
                             "The monsters we fear in the shadows are only the reflection of the silence we created."
                         </p>
-                        <a href="https://discord.gg/7QW73gdMmP" target="_blank" style="color: #ff3333; font-size: 10px; text-decoration: underline;">JOIN DISCORD COMMUNITY →</a>
+                        <a href="https://discord.gg/byFp2eAXWy" target="_blank" style="color: #ff3333; font-size: 10px; text-decoration: underline;">JOIN DISCORD COMMUNITY →</a>
                     </div>
                 </div>
 
@@ -682,7 +684,7 @@
 
         const glow = document.getElementById('cursor-glow');
 
-        // MOUSE LEAVE DÜZELTİLDİ: SİTEDEN ÇIKINCA GLOW KAPATILIR
+        /* SCROLL YAPILSA BİLE BOZULMAYAN KESİN KUSURSUZ FARE IŞIĞI */
         window.addEventListener('mousemove', (e) => {
             glow.style.opacity = '1';
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
@@ -790,7 +792,7 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // TAM İSTEDİĞİN ORANTILI BUTON VE DEAD PATLAMA AKIŞI
+        // HARVEST ENGINE
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
         let sessionClicks = 0;
         let overClickCount = 0;
@@ -833,7 +835,6 @@
                     isDead = true;
                     document.body.classList.add('is-dead');
 
-                    // 1. ZİFİRİ SİYAH EKRAN: TÜM ARAYÜZ SİLİNİR
                     viewport.style.opacity = "0";
                     if(uiWidgetLeft) uiWidgetLeft.style.display = "none";
                     if(uiWidgetRight) uiWidgetRight.style.display = "none";
@@ -843,18 +844,16 @@
 
                     window.scrollTo(0, 0);
 
-                    // 2. BUTON ORİJİNAL KÜÇÜK BOYUTUYLA EKRANIN TAM ORTASINA GEÇER
                     harvestBtn.style.position = "fixed";
                     harvestBtn.style.top = "50%";
                     harvestBtn.style.left = "50%";
                     harvestBtn.style.transform = "translate(-50%, -50%)";
-                    harvestBtn.style.width = "300px"; // KÜÇÜK KONTROLLÜ BOYUT
+                    harvestBtn.style.width = "300px";
                     harvestBtn.style.zIndex = "999999";
                     harvestBtn.style.pointerEvents = "none";
                     harvestBtn.style.boxShadow = "0 0 25px #ff0000";
                     document.body.appendChild(harvestBtn);
 
-                    // 3. EKRANIN ORTASINDA 1.5 SANİYE BEKLEYİP YAVAŞÇA ALEV ALARAK PATLAR
                     setTimeout(() => {
                         flashOverlay.style.display = 'block';
 
@@ -872,7 +871,6 @@
                         harvestBtn.remove();
                         glitchOverlay.style.display = 'none';
 
-                        // 4. BEKLEMEDEN SONRA TEK SAYFADA NAZİK "DEAD." AÇILIŞI
                         setTimeout(() => {
                             deadScreen.style.display = 'flex';
                         }, 800);
