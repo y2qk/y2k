@@ -89,37 +89,36 @@
             accent-color: #fff;
         }
 
-        /* FARE IŞIĞI (SABİTLENMİŞ FIX VIEWPORT) */
+        /* FARE IŞIĞI (TAMAMEN FIX POZİSYON KİLİTLİ) */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
             width: 70px; height: 70px;
-            margin-left: -35px; margin-top: -35px;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 45%, transparent 75%);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 99999;
             filter: drop-shadow(0 0 10px #fff);
             opacity: 0;
+            transform: translate(-50%, -50%);
             transition: opacity 0.2s ease;
-            will-change: transform;
         }
 
-        /* FARE İZİ (SABİTLENMİŞ FIX VIEWPORT) */
+        /* FARE İZİ (FIXED VIEWPORT) */
         .trail-particle {
             position: fixed;
             pointer-events: none;
             font-size: 10px;
             color: #fff;
             text-shadow: 0 0 8px #fff;
-            z-index: 9998;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
             animation: trailFade 0.6s forwards ease-out;
-            will-change: transform, opacity;
         }
 
         @keyframes trailFade {
-            0% { opacity: 1; transform: scale(1) translateY(0); }
-            100% { opacity: 0; transform: scale(0.3) translateY(-15px); }
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) translateY(-15px); }
         }
 
         #matrix-canvas {
@@ -683,19 +682,12 @@
         }
 
         const glow = document.getElementById('cursor-glow');
-        let lastMouseX = window.innerWidth / 2;
-        let lastMouseY = window.innerHeight / 2;
 
-        // SCROLL VE MOUSE HAREKETLERİNDE KESİNTİSİZ HESAPLAMA SİSTEMİ
-        function updateGlowPosition(clientX, clientY) {
-            lastMouseX = clientX;
-            lastMouseY = clientY;
-            glow.style.opacity = '1';
-            glow.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
-        }
-
+        // TAMAMLAYICI MOUSE TRACKING SİSTEMİ (SCROLL VE POSITION YENİLEMESİ)
         window.addEventListener('mousemove', (e) => {
-            updateGlowPosition(e.clientX, e.clientY);
+            glow.style.opacity = '1';
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
 
             if (Math.random() > 0.7) {
                 const particle = document.createElement('div');
@@ -707,11 +699,6 @@
                 setTimeout(() => particle.remove(), 600);
             }
         });
-
-        // SAYFA SCROLL EDİLİRKEN IŞIĞI ANINDA FARENİN ALTINA ANLIK KİLİTLER
-        window.addEventListener('scroll', () => {
-            updateGlowPosition(lastMouseX, lastMouseY);
-        }, { passive: true });
 
         document.addEventListener('mouseleave', () => {
             glow.style.opacity = '0';
@@ -901,7 +888,6 @@
             harvestBtn.style.transform = `scale(0.94) rotate(${deg}deg)`;
             setTimeout(() => harvestBtn.style.transform = 'scale(1) rotate(0deg)', 100);
 
-            // Kan Parçacıklarının Ekrandaki Yerini Sabitler
             for (let i = 0; i < 12; i++) {
                 const p = document.createElement('div');
                 p.className = 'blood-particle';
