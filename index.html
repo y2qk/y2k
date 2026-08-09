@@ -9,12 +9,23 @@
         
         html { scroll-behavior: smooth; }
 
+        /* Siteye İlk Giriş Açılış Animasyonu */
         body {
             background-color: #000;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             overflow-x: hidden;
             cursor: crosshair;
+            opacity: 0;
+            transform: scale(0.98);
+            animation: pageIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+        }
+
+        @keyframes pageIntro {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* Sol Üst Widget */
@@ -36,7 +47,7 @@
             gap: 10px;
         }
 
-        /* Büyütülen Sağ Üst Müzik Çalar */
+        /* Sağ Üst Müzik Çalar + İleri/Geri Butonları */
         .top-right-music {
             position: fixed;
             top: 15px; right: 20px;
@@ -45,12 +56,12 @@
             color: #fff;
             z-index: 100;
             background: rgba(8, 8, 12, 0.85);
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
             text-shadow: 0 0 6px #fff;
         }
@@ -62,10 +73,17 @@
             cursor: pointer;
             font-family: inherit;
             font-size: 12px;
-            transition: transform 0.1s;
+            transition: transform 0.1s, color 0.2s;
         }
 
-        .music-btn:hover { transform: scale(1.2); }
+        .music-btn:hover { transform: scale(1.2); color: #888; }
+
+        .volume-slider {
+            width: 45px;
+            height: 3px;
+            accent-color: #fff;
+            cursor: pointer;
+        }
 
         #cursor-glow {
             position: fixed;
@@ -164,11 +182,9 @@
             text-align: center; border-radius: 6px;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
-            transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* YUKARI VE AŞAĞI KAYDIRMA ANİMASYONLARI */
         .reveal-card {
             opacity: 0;
             transform: translateY(70px) scale(0.9) rotateX(15deg);
@@ -179,45 +195,20 @@
             transform: translateY(0) scale(1) rotateX(0deg);
         }
 
-        /* KUTUYA ÇİVİLİ VE YUKARI KAÇAN ÖRÜMCEK */
-        .spider-anchor {
-            position: absolute;
-            bottom: -45px;
-            right: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: -1;
-            cursor: pointer;
-        }
-
-        .spider-thread {
-            width: 1px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 0 4px #fff;
-            transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .spider-icon {
-            width: 20px; height: 20px; fill: #aaa;
-            filter: drop-shadow(0 0 6px #fff);
-            transition: fill 0.2s;
-        }
-
-        .spider-anchor:hover .spider-thread {
-            height: 5px; /* İp kısalır, örümcek yukarı tırmanır */
-        }
-
-        .spider-anchor:hover .spider-icon {
-            fill: #fff;
-        }
-
+        /* KELEBEK PARLAMA VE HOVER EFEKTİ */
         .butterfly-svg {
-            width: 50px; height: auto; fill: #ccc;
+            width: 55px; height: auto; fill: #ccc;
             filter: drop-shadow(0 0 8px #fff);
             margin-bottom: 15px; margin-top: 5px;
+            cursor: pointer;
+            transition: all 0.4s ease;
             animation: pulseGlow 3s infinite alternate;
+        }
+
+        .butterfly-svg:hover {
+            fill: #fff;
+            filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 35px #fff);
+            transform: scale(1.15) rotate(5deg);
         }
 
         @keyframes pulseGlow {
@@ -248,7 +239,9 @@
 
         .dc-btn:hover {
             background: #fff; color: #000;
-            box-shadow: 0 0 25px #fff; border-color: #fff;
+            box-shadow: 0 0 30px #fff, 0 0 10px #aaa;
+            border-color: #fff;
+            letter-spacing: 1px;
         }
 
         .dc-icon { width: 20px; height: 20px; fill: currentColor; }
@@ -273,7 +266,7 @@
             width: 100%; user-select: none;
         }
 
-        .click-btn:hover { background: #111; border-color: #fff; }
+        .click-btn:hover { background: #111; border-color: #fff; box-shadow: 0 0 15px #fff; }
 
         .lock-container {
             width: 150px; height: 150px;
@@ -362,14 +355,17 @@
         <span id="clockBox">00:00:00</span>
     </div>
 
-    <!-- Büyütülen Sağ Üst Müzik Çalar -->
+    <!-- Sağ Üst Müzik Çalar + İleri/Geri Butonları -->
     <div class="top-right-music">
-        <span>♫ CYBER_VOID</span>
+        <button class="music-btn" onclick="prevSong()">&lt;&lt;</button>
         <button class="music-btn" onclick="toggleAudio()" id="playBtn">▶</button>
+        <button class="music-btn" onclick="nextSong()">&gt;&gt;</button>
+        <span id="songTitle">♫ VOID_AMBIENCE_1</span>
+        <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="0.3" oninput="changeVolume(this.value)">
     </div>
 
-    <!-- Otomatik Çalan Gerçek Müzik Akışı -->
-    <audio id="bg-music" loop src="https://stream.zeno.fm/f3wvbbqmdg8uv"></audio>
+    <!-- Müzik Akış Çalar -->
+    <audio id="bg-music" loop src="https://stream.zeno.fm/r492uv8a52zuv"></audio>
 
     <div id="cursor-glow"></div>
     <div id="blood-container"></div>
@@ -396,25 +392,18 @@
         <div class="section" id="sec1">
             <div class="card reveal-card active">
                 <svg class="butterfly-svg" viewBox="0 0 24 24">
-                    <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 4 0-3 1.5-5.5 4-7-2.5-1.5-4-4-4-7 3 0 5.5 1.5 7 4z"/>
+                    <path d="M12 12c1.5-2.5 4-4 7-4 0 3-1.5 5.5-4 7 2.5 1.5 4 4 4 7-3 0-5.5-1.5-7-4-1.5 2.5-4 4-7 3 0-5.5 1.5-7 4z"/>
                 </svg>
 
                 <h1>y.1q.</h1>
                 <div class="subtitle">✦ 𐕣 GHOST // Y2K GOTHIC 𐕣 ✦</div>
 
-                <a href="https://discord.gg/28HEFx4a5" target="_blank" class="dc-btn">
+                <a href="https://discord.gg/byFp2eAXWy" target="_blank" class="dc-btn">
                     <svg class="dc-icon" viewBox="0 0 127.14 96.36">
                         <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0, -3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.33,85.25a68.42,68.42,0,0,1,-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1,-10.87,5.19,77,77,0,0,0,6.6,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.41-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.92,53.87,53,48.81,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.92,96.1,53,91.05,65.69,84.69,65.69Z"/>
                     </svg>
                     JOIN DISCORD SERVER
                 </a>
-
-                <div class="spider-anchor">
-                    <div class="spider-thread"></div>
-                    <svg class="spider-icon" viewBox="0 0 24 24">
-                        <path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM12 7C9.2 7 7 9.2 7 12C7 13.8 8 15.4 9.5 16.3L8 21H10L11.2 17.2C11.5 17.3 11.7 17.3 12 17.3C12.3 17.3 12.5 17.3 12.8 17.2L14 21H16L14.5 16.3C16 15.4 17 13.8 17 12C17 9.2 14.8 7 12 7ZM5 9L2 6V8L4.3 10.3C4.1 10.8 4 11.4 4 12C4 12.6 4.1 13.2 4.3 13.7L2 16V18L5 15C5.6 15.6 6.3 16.1 7.1 16.4L5.5 21H7.6L8.9 17.1C9.8 17.7 10.9 18 12 18C13.1 18 14.2 17.7 15.1 17.1L16.4 21H18.5L16.9 16.4C17.7 16.1 18.4 15.6 19 15L22 18V16L19.7 13.7C19.9 13.2 20 12.6 20 12C20 11.4 19.9 10.8 19.7 10.3L22 8V6L19 9C18.1 8.1 16.9 7.5 15.6 7.2L17 3H14.9L13.7 6.6C13.2 6.5 12.6 6.5 12 6.5C11.4 6.5 10.8 6.5 10.3 6.6L9.1 3H7L8.4 7.2C7.1 7.5 5.9 8.1 5 9Z"/>
-                    </svg>
-                </div>
             </div>
             <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
         </div>
@@ -461,7 +450,7 @@
                         <p style="font-size: 12px; color: #fff; margin: 10px 0; font-style: italic; line-height: 1.5; text-shadow: 0 0 8px #ff0000;">
                             "The monsters we fear in the shadows are only the reflection of the silence we created."
                         </p>
-                        <a href="https://discord.gg/28HEFx4a5" target="_blank" style="color: #ff3333; font-size: 10px; text-decoration: underline;">JOIN DISCORD COMMUNITY →</a>
+                        <a href="https://discord.gg/byFp2eAXWy" target="_blank" style="color: #ff3333; font-size: 10px; text-decoration: underline;">JOIN DISCORD COMMUNITY →</a>
                     </div>
                 </div>
 
@@ -476,10 +465,18 @@
     </div>
 
     <script>
-        // Müzik Motoru (İlk Tıklamada Otomatik Başlar)
+        // Ürkütücü Müzik Playlist Listesi
+        const playlist = [
+            { title: "VOID_AMBIENCE_1", url: "https://stream.zeno.fm/r492uv8a52zuv" },
+            { title: "DARK_SYNTH_2", url: "https://stream.zeno.fm/f3wvbbqmdg8uv" },
+            { title: "GHOST_DRONE_3", url: "https://stream.zeno.fm/f1wvbbqmdg8uv" }
+        ];
+        let currentTrack = 0;
+
         const music = document.getElementById('bg-music');
         const playBtn = document.getElementById('playBtn');
-        music.volume = 0.25; // Rahatsız etmeyecek hafif seviye
+        const songTitle = document.getElementById('songTitle');
+        music.volume = 0.3;
 
         function startAutoMusic() {
             music.play().then(() => {
@@ -499,7 +496,45 @@
             }
         }
 
-        // Kaydırma Animasyonu Observer
+        function nextSong() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadTrack();
+        }
+
+        function prevSong() {
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            loadTrack();
+        }
+
+        function loadTrack() {
+            music.src = playlist[currentTrack].url;
+            songTitle.innerText = "♫ " + playlist[currentTrack].title;
+            music.play();
+            playBtn.innerText = "II";
+        }
+
+        function changeVolume(val) {
+            music.volume = val;
+        }
+
+        function playSoftClick() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
+        }
+
+        // Scroll Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -617,6 +652,7 @@
         scoreElem.innerText = savedScore;
 
         function addLocalScore(e) {
+            playSoftClick();
             savedScore++;
             sessionClicks++;
             localStorage.setItem('y1q_harvest_score', savedScore);
@@ -698,6 +734,7 @@
         rotateDial();
 
         function tryUnlock() {
+            playSoftClick();
             let diff = Math.abs(angle - targetAngle);
             if (diff > 180) diff = 360 - diff;
 
