@@ -27,7 +27,6 @@
             animation: pageIntro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
         }
 
-        /* Dead Durumunda Scroll Kilitlenir */
         body.is-dead {
             overflow: hidden !important;
             height: 100vh !important;
@@ -90,6 +89,7 @@
             accent-color: #fff;
         }
 
+        /* GLOW EFEKTİ DÜZELTİLDİ */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -100,6 +100,8 @@
             pointer-events: none;
             z-index: 9999;
             filter: drop-shadow(0 0 10px #fff);
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
 
         .trail-particle {
@@ -175,7 +177,6 @@
             100% { transform: translate(3px, -3px) scale(1.01); opacity: 0.9; }
         }
 
-        /* TEK SAYFA ZİFİRİ SİYAH UNDERTALE DEAD SCREEN */
         #dead-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -188,7 +189,7 @@
             text-align: center;
         }
 
-        /* GOTHIC Y2K DALGALANAN DEAD YAZISI */
+        /* SÜRESİ UZATILAN DEAD YAZISI */
         .dead-title {
             font-size: 80px;
             font-weight: 900;
@@ -196,13 +197,13 @@
             letter-spacing: 16px;
             text-shadow: 0 0 25px #ff0000, 0 0 50px #880000;
             opacity: 0;
-            animation: gothicWave 3s ease-in-out forwards;
+            animation: gothicWave 5s ease-in-out forwards;
         }
 
         @keyframes gothicWave {
             0% { opacity: 0; transform: translateY(20px) scale(0.9); }
-            30% { opacity: 1; transform: translateY(0) scale(1); }
-            70% { opacity: 1; transform: translateY(-10px) scale(1.05); text-shadow: 0 0 35px #ff0000; }
+            20% { opacity: 1; transform: translateY(0) scale(1); }
+            80% { opacity: 1; transform: translateY(-5px) scale(1.02); text-shadow: 0 0 35px #ff0000; }
             100% { opacity: 0; transform: translateY(-20px) scale(0.95); display: none; }
         }
 
@@ -218,7 +219,7 @@
             cursor: pointer;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
             transition: all 0.3s ease;
-            animation: btnFadeIn 1s ease-out forwards 3.2s; /* YAZI GİTTİKTEN SONRA GELİR */
+            animation: btnFadeIn 1s ease-out forwards 5.2s; /* YAZI BİTİNCE GELİR */
         }
 
         @keyframes btnFadeIn {
@@ -471,14 +472,12 @@
 </head>
 <body>
 
-    <!-- Sol Üst Widget -->
     <div class="top-left-widget" id="ui-widget-left">
         <span id="weatherBox">☁ LOCATING...</span>
         <span>|</span>
         <span id="clockBox">00:00:00</span>
     </div>
 
-    <!-- Sağ Üst Müzik Çalar -->
     <div class="top-right-music" id="ui-widget-right">
         <button class="music-btn" onclick="prevSong()">&lt;&lt;</button>
         <button class="music-btn" onclick="toggleAudio()" id="playBtn">▶</button>
@@ -498,7 +497,6 @@
 
     <div id="tv-glitch-overlay"></div>
 
-    <!-- UNDERTALE DEAD SCREEN -->
     <div id="dead-screen">
         <div class="dead-title">DEAD.</div>
         <button class="reload-btn" onclick="location.reload()">[ RELOAD SYSTEM ]</button>
@@ -507,7 +505,6 @@
     <div class="scanlines"></div>
     <canvas id="matrix-canvas"></canvas>
 
-    <!-- Yan Sözler -->
     <div class="quote-column quote-left-col" id="ui-quotes-left">
         <div class="side-quote" id="lq1"></div>
         <div class="side-quote" id="lq2"></div>
@@ -522,7 +519,7 @@
 
     <div id="viewport">
 
-        <!-- SAYFA 1: PROFİL -->
+        <!-- SAYFA 1 -->
         <div class="section" id="sec1">
             <div class="card reveal-card active">
                 <svg class="butterfly-svg" viewBox="0 0 100 100">
@@ -544,7 +541,7 @@
             <div class="scroll-hint">▼ SCROLL FOR MINIGAMES ▼</div>
         </div>
 
-        <!-- SAYFA 2: HARVEST CLICKER -->
+        <!-- SAYFA 2 -->
         <div class="section" id="sec2">
             <div class="card reveal-card" id="harvestCard">
                 <h1>soul harvest</h1>
@@ -564,7 +561,7 @@
             </div>
         </div>
 
-        <!-- SAYFA 3: CYBER LOCKPICK OYUNU -->
+        <!-- SAYFA 3 -->
         <div class="section" id="sec3">
             <div class="card reveal-card">
                 <h1>cyber lockpick</h1>
@@ -685,8 +682,9 @@
 
         const glow = document.getElementById('cursor-glow');
 
-        // Mouse Trail
+        // MOUSE LEAVE DÜZELTİLDİ: SİTEDEN ÇIKINCA GLOW KAPATILIR
         window.addEventListener('mousemove', (e) => {
+            glow.style.opacity = '1';
             glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
 
             if (Math.random() > 0.7) {
@@ -698,6 +696,10 @@
                 document.body.appendChild(particle);
                 setTimeout(() => particle.remove(), 600);
             }
+        });
+
+        document.addEventListener('mouseleave', () => {
+            glow.style.opacity = '0';
         });
 
         // Scroll Observer
@@ -788,7 +790,7 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // TAM İSTEDİĞİN SİNEMATİK PATLAMA AKIŞI
+        // TAM İSTEDİĞİN ORANTILI BUTON VE DEAD PATLAMA AKIŞI
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
         let sessionClicks = 0;
         let overClickCount = 0;
@@ -829,9 +831,9 @@
 
                 if(overClickCount >= 4) {
                     isDead = true;
-                    document.body.classList.add('is-dead'); // SCROLL KİLİTLENİR
+                    document.body.classList.add('is-dead');
 
-                    // 1. AŞAMA: SİTEDEKİ TÜM ARAYÜZÜ YOK ET (ZİFİRİ SİYAH EKRAN)
+                    // 1. ZİFİRİ SİYAH EKRAN: TÜM ARAYÜZ SİLİNİR
                     viewport.style.opacity = "0";
                     if(uiWidgetLeft) uiWidgetLeft.style.display = "none";
                     if(uiWidgetRight) uiWidgetRight.style.display = "none";
@@ -839,19 +841,20 @@
                     if(uiQuotesRight) uiQuotesRight.style.display = "none";
                     bloodContainer.style.display = "none";
 
-                    // 2. AŞAMA: EN ÜSTE KAYDIR
                     window.scrollTo(0, 0);
 
-                    // 3. AŞAMA: BUTONU EKRANIN ORTASINDA BİR SÜRE BEKLET (1.5 SN)
+                    // 2. BUTON ORİJİNAL KÜÇÜK BOYUTUYLA EKRANIN TAM ORTASINA GEÇER
                     harvestBtn.style.position = "fixed";
                     harvestBtn.style.top = "50%";
                     harvestBtn.style.left = "50%";
-                    harvestBtn.style.transform = "translate(-50%, -50%) scale(1.3)";
+                    harvestBtn.style.transform = "translate(-50%, -50%)";
+                    harvestBtn.style.width = "300px"; // KÜÇÜK KONTROLLÜ BOYUT
                     harvestBtn.style.zIndex = "999999";
                     harvestBtn.style.pointerEvents = "none";
+                    harvestBtn.style.boxShadow = "0 0 25px #ff0000";
                     document.body.appendChild(harvestBtn);
 
-                    // GÖZ GÖRE GÖRE BEKLEME, ARDINDAN PATLAMA
+                    // 3. EKRANIN ORTASINDA 1.5 SANİYE BEKLEYİP YAVAŞÇA ALEV ALARAK PATLAR
                     setTimeout(() => {
                         flashOverlay.style.display = 'block';
 
@@ -869,12 +872,12 @@
                         harvestBtn.remove();
                         glitchOverlay.style.display = 'none';
 
-                        // 4. AŞAMA: TEK SAYFA ZİFİRİ SİYAH EKRANDA "DEAD." VE BUTON
+                        // 4. BEKLEMEDEN SONRA TEK SAYFADA NAZİK "DEAD." AÇILIŞI
                         setTimeout(() => {
                             deadScreen.style.display = 'flex';
                         }, 800);
 
-                    }, 1500); // 1.5 saniye ekranda kalır
+                    }, 1500);
 
                     return;
                 }
