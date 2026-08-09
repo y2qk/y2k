@@ -15,8 +15,8 @@
             cursor: crosshair;
         }
 
-        /* Sol Üst Hava Durumu */
-        .top-left-weather {
+        /* Sol Üst Hava Durumu + Dijital Saat */
+        .top-left-widget {
             position: fixed;
             top: 15px; left: 20px;
             font-size: 10px;
@@ -27,10 +27,42 @@
             z-index: 100;
             pointer-events: none;
             background: rgba(0, 0, 0, 0.6);
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 3px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            gap: 10px;
         }
+
+        /* Sağ Üst Müzik Çalar */
+        .top-right-music {
+            position: fixed;
+            top: 15px; right: 20px;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            color: #fff;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 12px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 6px #fff;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 11px;
+            transition: color 0.2s;
+        }
+
+        .music-btn:hover { color: #888; }
 
         /* Fare Işığı */
         #cursor-glow {
@@ -60,7 +92,7 @@
             width: 100%; height: 0%;
             z-index: 2;
             pointer-events: none;
-            transition: height 0.4s ease-out;
+            transition: height 0.5s ease-out;
             background: linear-gradient(to top, rgba(150, 0, 0, 0.85) 0%, rgba(50, 0, 0, 0.4) 100%);
             box-shadow: 0 -10px 25px rgba(255, 0, 0, 0.5);
         }
@@ -80,24 +112,24 @@
             z-index: 3;
         }
 
-        /* TV Glitch Efekti Overlay (%100 Kan Olunca Tetiklenir) */
+        /* TV Glitch Overlay */
         #tv-glitch-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(255, 0, 0, 0.3), rgba(0, 0, 0, 0.8) 2px, transparent 4px);
+            background: repeating-linear-gradient(0deg, rgba(255, 0, 0, 0.4), rgba(0, 0, 0, 0.9) 2px, transparent 4px);
             z-index: 999;
             pointer-events: none;
             display: none;
-            animation: tvStatic 0.1s infinite;
+            animation: tvStatic 0.08s infinite;
         }
 
         @keyframes tvStatic {
-            0% { transform: translate(2px, -2px); opacity: 0.8; }
-            50% { transform: translate(-2px, 2px); opacity: 0.9; }
-            100% { transform: translate(1px, -1px); opacity: 0.7; }
+            0% { transform: translate(3px, -3px); opacity: 0.9; }
+            50% { transform: translate(-3px, 3px); opacity: 1; }
+            100% { transform: translate(1px, -1px); opacity: 0.8; }
         }
 
-        /* Yandaki Sözler (Eski Temiz Beyaz Glow) */
+        /* Yandaki Sözler (Temiz Beyaz Glow) */
         .quote-column {
             position: fixed;
             top: 0; width: 220px; height: 100vh;
@@ -125,6 +157,7 @@
             position: relative; padding: 60px 20px;
         }
 
+        /* 3D Derinlikli Kart */
         .card {
             position: relative;
             background: rgba(8, 8, 10, 0.95);
@@ -134,41 +167,38 @@
             text-align: center; border-radius: 6px;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(8px);
+            transform-style: preserve-3d;
         }
 
-        /* ÖRÜMCEK SİSTEMİ (KUTUYA SABİT & YUKARI ÇEKİLEN İP) */
+        /* ÖRÜMCEK 3D KUTU ARKASINA GİZLEME */
         .spider-anchor {
             position: absolute;
-            bottom: -45px;
+            bottom: -40px;
             right: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 10;
+            z-index: -1; /* KUTUNUN ARKASINDA DURUR */
             cursor: pointer;
+            transition: transform 0.4s ease-in-out;
         }
 
         .spider-thread {
             width: 1px;
-            height: 35px;
-            background: rgba(255, 255, 255, 0.7);
+            height: 40px;
+            background: rgba(255, 255, 255, 0.6);
             box-shadow: 0 0 4px #fff;
-            transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .spider-icon {
-            width: 22px; height: 22px; fill: #aaa;
+            width: 20px; height: 20px; fill: #aaa;
             filter: drop-shadow(0 0 6px #fff);
             transition: fill 0.2s;
         }
 
-        /* Hover Olunca İp Kısalır, Örümcek Kutunun Altına Doğru Çekilir */
-        .spider-anchor:hover .spider-thread {
-            height: 5px;
-        }
-
-        .spider-anchor:hover .spider-icon {
-            fill: #fff;
+        /* Üstüne gelince kutunun arkasından YUKARI SAKLANIR */
+        .spider-anchor:hover {
+            transform: translateY(-38px);
         }
 
         .butterfly-svg {
@@ -233,8 +263,9 @@
 
         .click-btn:hover { background: #111; border-color: #fff; }
 
+        /* Lockpick Oyunu (Büyütüldü & Kolaylaştırıldı) */
         .lock-container {
-            width: 140px; height: 140px;
+            width: 150px; height: 150px;
             border: 2px solid #444; border-radius: 50%;
             margin: 15px auto; position: relative;
             display: flex; align-items: center; justify-content: center;
@@ -242,13 +273,13 @@
         }
 
         .lock-target {
-            position: absolute; width: 25px; height: 25px;
-            border-radius: 50%; background: rgba(255, 255, 255, 0.2);
-            border: 1px solid #fff; box-shadow: 0 0 10px #fff;
+            position: absolute; width: 34px; height: 34px; /* Genişletildi */
+            border-radius: 50%; background: rgba(255, 255, 255, 0.25);
+            border: 1px solid #fff; box-shadow: 0 0 12px #fff;
         }
 
         .lock-pointer {
-            position: absolute; width: 2px; height: 60px;
+            position: absolute; width: 2px; height: 65px;
             background: #fff; top: 10px;
             transform-origin: bottom center; box-shadow: 0 0 8px #fff;
         }
@@ -304,11 +335,28 @@
             margin-top: 15px; border-radius: 4px;
             box-shadow: 0 0 15px #ff0000;
         }
+
+        .hint-badge {
+            font-size: 9px; color: #ff3333; letter-spacing: 1.5px;
+            margin-bottom: 5px; text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-left-weather" id="weatherBox">☁ LOCATING...</div>
+    <!-- Sol Üst Widget (Hava Durumu + Saat) -->
+    <div class="top-left-widget">
+        <span id="weatherBox">☁ LOCATING...</span>
+        <span>|</span>
+        <span id="clockBox">00:00:00</span>
+    </div>
+
+    <!-- Sağ Üst Müzik Çalar -->
+    <div class="top-right-music">
+        <span id="songTitle">♫ CYBER_VOID.MP3</span>
+        <button class="music-btn" onclick="toggleMusic()" id="playBtn">▶</button>
+        <button class="music-btn" onclick="nextSong()">&gt;&gt;</button>
+    </div>
 
     <div id="cursor-glow"></div>
     <div id="blood-container"></div>
@@ -348,7 +396,7 @@
                     JOIN DISCORD SERVER
                 </a>
 
-                <!-- KUTUYA SABİT KANLI DÜZELTİLEN ÖRÜMCEK -->
+                <!-- 3D KUTUNUN ARKASINA SAKLANAN ÖRÜMCEK -->
                 <div class="spider-anchor">
                     <div class="spider-thread"></div>
                     <svg class="spider-icon" viewBox="0 0 24 24">
@@ -386,7 +434,8 @@
                 <div class="subtitle">✦ TIMING HACK SYSTEM ✦</div>
                 
                 <div class="gothic-box">
-                    <p id="lockStatus" style="font-size: 11px; color: #ccc;">STOP THE DIAL INSIDE TARGET ZONE</p>
+                    <div class="hint-badge">[ 5 STREAK = SECRET VOID ]</div>
+                    <p id="lockStatus" style="font-size: 11px; color: #ccc;">STOP DIAL INSIDE TARGET</p>
                     
                     <div class="lock-container" id="lockDial">
                         <div class="lock-target" id="lockTarget"></div>
@@ -415,6 +464,48 @@
     </div>
 
     <script>
+        // Dijital Saat
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            document.getElementById('clockBox').innerText = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Müzik Çalar (Synth Generator)
+        let isPlaying = false;
+        let audioCtx = null;
+        let songIndex = 0;
+        const songs = ["CYBER_VOID.MP3", "GHOST_BEAT.MP3", "DARK_Y2K.MP3"];
+
+        function toggleMusic() {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').innerText = isPlaying ? "II" : "▶";
+        }
+
+        function nextSong() {
+            songIndex = (songIndex + 1) % songs.length;
+            document.getElementById('songTitle').innerText = "♫ " + songs[songIndex];
+        }
+
+        // Nazik Siber Tıklama Sesi
+        function playSoftClick() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine'; // Yumuşak ton
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
         // Fare Işığı
         const glow = document.getElementById('cursor-glow');
         window.addEventListener('mousemove', (e) => {
@@ -496,9 +587,9 @@
             setInterval(cycleQuote, 3500 + (index * 1200));
         });
 
-        // Kalıcı Skor Kaydı + Her Yeni Girişte %0 Kan Mantığı
+        // Clicker Engine + %100 Glitch & Kan Sıfırlama
         let savedScore = parseInt(localStorage.getItem('y1q_harvest_score')) || 0;
-        let sessionClicks = 0; // Her girişte %0'dan başlayan tıklama
+        let sessionClicks = 0;
         
         const scoreElem = document.getElementById('local-score');
         const harvestBtn = document.getElementById('harvestBtn');
@@ -509,20 +600,25 @@
         scoreElem.innerText = savedScore;
 
         function addLocalScore(e) {
+            playSoftClick();
             savedScore++;
             sessionClicks++;
             localStorage.setItem('y1q_harvest_score', savedScore);
             scoreElem.innerText = savedScore;
 
-            // Kan oranı yeni giriş yapan kullanıcı için %0'dan başlar, 20 tıklamada %100 olur
             let bloodPercent = Math.min(sessionClicks * 5, 100); 
             bloodContainer.style.height = bloodPercent + '%';
             bloodLevelText.innerText = bloodPercent + '%';
 
-            // %100 Kan Seviyesine Ulaşınca Anlık TV Glitch Sinyal Bozulması
+            // %100 Olunca Glitch Çakar ve 1.5 sn Sonra Kan Sıfırlanır
             if (bloodPercent >= 100) {
                 glitchOverlay.style.display = 'block';
-                setTimeout(() => { glitchOverlay.style.display = 'none'; }, 600);
+                setTimeout(() => { 
+                    glitchOverlay.style.display = 'none'; 
+                    sessionClicks = 0; // KANI SIFIRLAR
+                    bloodContainer.style.height = '0%';
+                    bloodLevelText.innerText = '0%';
+                }, 1500);
             }
 
             scoreElem.style.textShadow = '0 0 25px #fff, 0 0 35px #ff0000';
@@ -556,9 +652,9 @@
             setTimeout(() => drip.remove(), 1200);
         }
 
-        // Kilit Oyunu
+        // Kilit Oyunu (Aşırı Kolaylaştırıldı)
         let angle = 0;
-        let targetAngle = Math.random() * 280 + 40;
+        let targetAngle = Math.random() * 260 + 50;
         let streak = 0;
 
         const pointer = document.getElementById('lockPointer');
@@ -571,26 +667,27 @@
 
         function positionTarget() {
             const rad = (targetAngle - 90) * (Math.PI / 180);
-            const r = 50;
-            const x = 70 + r * Math.cos(rad) - 12.5;
-            const y = 70 + r * Math.sin(rad) - 12.5;
+            const r = 55;
+            const x = 75 + r * Math.cos(rad) - 17;
+            const y = 75 + r * Math.sin(rad) - 17;
             target.style.left = x + 'px';
             target.style.top = y + 'px';
         }
         positionTarget();
 
         function rotateDial() {
-            angle = (angle + 3) % 360;
+            angle = (angle + 2) % 360; // HIZ YAVAŞLATILDI (ÇOK RAHAT TUTAR)
             pointer.style.transform = `rotate(${angle}deg)`;
             requestAnimationFrame(rotateDial);
         }
         rotateDial();
 
         function tryUnlock() {
+            playSoftClick();
             let diff = Math.abs(angle - targetAngle);
             if (diff > 180) diff = 360 - diff;
 
-            if (diff < 22) {
+            if (diff < 32) { // TOLERANS BÜYÜTÜLDÜ
                 streak++;
                 streakCount.innerText = streak + " / 5";
                 lockStatus.innerText = "SUCCESS! NODE UNLOCKED 𐕣";
@@ -598,7 +695,7 @@
                 lockLog.innerText = "BYPASSED";
                 lockLog.style.color = "#00ffcc";
                 
-                targetAngle = Math.random() * 280 + 40;
+                targetAngle = Math.random() * 260 + 50;
                 positionTarget();
 
                 if(streak >= 5) {
