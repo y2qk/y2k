@@ -89,7 +89,7 @@
             accent-color: #fff;
         }
 
-        /* FARE IŞIĞI (FIXED POZİSYON KİLİTLENDİ) */
+        /* FARE IŞIĞI (SABİTLENMİŞ FIX VIEWPORT) */
         #cursor-glow {
             position: fixed;
             top: 0; left: 0;
@@ -105,7 +105,7 @@
             will-change: transform;
         }
 
-        /* FARE İZİ (FIXED POZİSYON KİLİTLENDİ) */
+        /* FARE İZİ (SABİTLENMİŞ FIX VIEWPORT) */
         .trail-particle {
             position: fixed;
             pointer-events: none;
@@ -425,7 +425,7 @@
         .log-green { color: #fff; text-shadow: 0 0 8px #fff; }
 
         .blood-particle {
-            position: absolute; pointer-events: none;
+            position: fixed; pointer-events: none;
             background: #cc0000; border-radius: 50%;
             box-shadow: 0 0 10px #ff0000; z-index: 20;
             animation: particleFade 0.7s forwards ease-out;
@@ -683,11 +683,19 @@
         }
 
         const glow = document.getElementById('cursor-glow');
+        let lastMouseX = window.innerWidth / 2;
+        let lastMouseY = window.innerHeight / 2;
 
-        /* SCROLL YAPILSA BİLE BOZULMAYAN KESİN KUSURSUZ FARE IŞIĞI */
-        window.addEventListener('mousemove', (e) => {
+        // SCROLL VE MOUSE HAREKETLERİNDE KESİNTİSİZ HESAPLAMA SİSTEMİ
+        function updateGlowPosition(clientX, clientY) {
+            lastMouseX = clientX;
+            lastMouseY = clientY;
             glow.style.opacity = '1';
-            glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+            glow.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            updateGlowPosition(e.clientX, e.clientY);
 
             if (Math.random() > 0.7) {
                 const particle = document.createElement('div');
@@ -699,6 +707,11 @@
                 setTimeout(() => particle.remove(), 600);
             }
         });
+
+        // SAYFA SCROLL EDİLİRKEN IŞIĞI ANINDA FARENİN ALTINA ANLIK KİLİTLER
+        window.addEventListener('scroll', () => {
+            updateGlowPosition(lastMouseX, lastMouseY);
+        }, { passive: true });
 
         document.addEventListener('mouseleave', () => {
             glow.style.opacity = '0';
@@ -888,20 +901,18 @@
             harvestBtn.style.transform = `scale(0.94) rotate(${deg}deg)`;
             setTimeout(() => harvestBtn.style.transform = 'scale(1) rotate(0deg)', 100);
 
-            const box = document.getElementById('clickerBox');
-            const rect = box.getBoundingClientRect();
-            
+            // Kan Parçacıklarının Ekrandaki Yerini Sabitler
             for (let i = 0; i < 12; i++) {
                 const p = document.createElement('div');
                 p.className = 'blood-particle';
                 const size = Math.random() * 10 + 4;
                 p.style.width = size + 'px';
                 p.style.height = size + 'px';
-                p.style.left = (e.clientX - rect.left) + 'px';
-                p.style.top = (e.clientY - rect.top) + 'px';
+                p.style.left = e.clientX + 'px';
+                p.style.top = e.clientY + 'px';
                 p.style.setProperty('--dx', (Math.random() - 0.5) * 180 + 'px');
                 p.style.setProperty('--dy', (Math.random() - 0.5) * 180 + 'px');
-                box.appendChild(p);
+                document.body.appendChild(p);
                 setTimeout(() => p.remove(), 700);
             }
 
